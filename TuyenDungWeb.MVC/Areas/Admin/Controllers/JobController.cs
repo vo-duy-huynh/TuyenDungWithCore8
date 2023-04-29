@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Model;
-using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.MVC.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+    //[Area("Admin")]
+    //[Authorize(Roles = SD.Role_Admin)]
     public class JobController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -28,11 +26,6 @@ namespace TuyenDungWeb.MVC.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(Job obj)
         {
-            if (obj.Name == obj.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
-            }
-
             if (ModelState.IsValid)
             {
                 _unitOfWork.Job.Add(obj);
@@ -44,9 +37,9 @@ namespace TuyenDungWeb.MVC.Areas.Admin.Controllers
 
         }
 
-        public IActionResult Edit(Guid? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }

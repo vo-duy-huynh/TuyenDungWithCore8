@@ -24,11 +24,11 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
             modelBuilder.Entity("CompanyTag", b =>
                 {
-                    b.Property<Guid>("CompaniesId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("CompaniesId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
 
                     b.HasKey("CompaniesId", "TagsId");
 
@@ -39,11 +39,11 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
             modelBuilder.Entity("JobPostTag", b =>
                 {
-                    b.Property<Guid>("JobPostsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobPostsId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
 
                     b.HasKey("JobPostsId", "TagsId");
 
@@ -259,22 +259,21 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.Company", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Company", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CompanyEmail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -282,32 +281,62 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompanyEmail = "fpt@gmail.com",
+                            Content = "No",
+                            Location = "326 Hai Bà Trưng, Ba Đình, Hà Nội",
+                            Name = "FPT",
+                            PhoneNumber = "0987654321"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CompanyEmail = "intel@gmail.com",
+                            Content = "No",
+                            Location = "327 Hiệp Phú, Thủ Đức, Hồ Chí Minh",
+                            Name = "Intel",
+                            PhoneNumber = "0987654321"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CompanyEmail = "viecombank@gmail.com",
+                            Content = "No",
+                            Location = "123 Hải Thượng Lãn Ông, Đà Nẵng",
+                            Name = "Vietcombank",
+                            PhoneNumber = "0987654321"
+                        });
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.CompanyComment", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyComment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -316,14 +345,16 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("CompanyComments");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.CompanyImage", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyImage", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -333,36 +364,52 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("CompanyImages");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.Job", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Job", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Jobs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Tester",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Hacker",
+                            Note = "No"
+                        });
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPost", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPost", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -378,24 +425,22 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Heading")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("JobId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("JobTypeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobTypeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NumberOfRecruiting")
+                    b.Property<int>("NumberOfRecruiting")
                         .HasColumnType("int");
 
                     b.Property<string>("PageTitle")
@@ -403,7 +448,6 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Salary")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortDescription")
@@ -417,7 +461,7 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Visible")
+                    b.Property<bool?>("Visible")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -431,11 +475,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("JobPosts");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPostComment", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPostComment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
@@ -443,11 +489,12 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("JobPostId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobPostId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -456,17 +503,19 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("JobPostComments");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPostLike", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPostLike", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("JobPostId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobPostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -475,11 +524,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("JobPostLikes");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobType", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -488,22 +539,36 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("JobTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Fulltime"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Parttime"
+                        });
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.Notification", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Notification", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("ApplicationUser")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUser")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SendDate")
+                    b.Property<DateTime>("SendDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("Status")
@@ -514,11 +579,17 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.ProfileHeader", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.ProfileHeader", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -535,14 +606,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("JobPostId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobPostId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("MatriculationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -550,34 +620,27 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SessionId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("JobPostId");
-
                     b.ToTable("ProfileHeaders");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.Tag", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Tag", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -587,13 +650,47 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "C#"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Java"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Python"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "C++"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "PHP"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Ruby"
+                        });
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.WishList", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.WishList", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -602,8 +699,8 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("JobPostId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("JobPostId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -612,31 +709,27 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("WishLists");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.ApplicationUser", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("CompanyId");
@@ -646,13 +739,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
             modelBuilder.Entity("CompanyTag", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.Company", null)
+                    b.HasOne("TuyenDungWeb.Models.Company", null)
                         .WithMany()
                         .HasForeignKey("CompaniesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TuyenDungWeb.Model.Tag", null)
+                    b.HasOne("TuyenDungWeb.Models.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -661,13 +754,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
             modelBuilder.Entity("JobPostTag", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.JobPost", null)
+                    b.HasOne("TuyenDungWeb.Models.JobPost", null)
                         .WithMany()
                         .HasForeignKey("JobPostsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TuyenDungWeb.Model.Tag", null)
+                    b.HasOne("TuyenDungWeb.Models.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -725,37 +818,47 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.CompanyComment", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyComment", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.Company", null)
-                        .WithMany("CompanyComments")
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TuyenDungWeb.Model.CompanyImage", b =>
-                {
-                    b.HasOne("TuyenDungWeb.Model.Company", "Company")
-                        .WithMany("CompanyImages")
-                        .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPost", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyImage", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.Company", "Company")
-                        .WithMany("JobPosts")
-                        .HasForeignKey("CompanyId");
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
+                        .WithMany("CompanyImages")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("TuyenDungWeb.Model.Job", "Job")
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPost", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("JobId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("TuyenDungWeb.Model.JobType", "JobType")
-                        .WithMany("JobPosts")
-                        .HasForeignKey("JobTypeId");
+                    b.HasOne("TuyenDungWeb.Models.Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TuyenDungWeb.Models.JobType", "JobType")
+                        .WithMany()
+                        .HasForeignKey("JobTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
 
@@ -764,84 +867,62 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("JobType");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPostComment", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPostComment", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.JobPost", null)
-                        .WithMany("JobPostComments")
+                    b.HasOne("TuyenDungWeb.Models.JobPost", "JobPost")
+                        .WithMany()
                         .HasForeignKey("JobPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("JobPost");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPostLike", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.JobPostLike", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.JobPost", null)
-                        .WithMany("JobPostLikes")
+                    b.HasOne("TuyenDungWeb.Models.JobPost", "JobPost")
+                        .WithMany()
                         .HasForeignKey("JobPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("JobPost");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.ProfileHeader", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.ProfileHeader", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.ApplicationUser", "ApplicationUser")
+                    b.HasOne("TuyenDungWeb.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TuyenDungWeb.Model.JobPost", "JobPost")
-                        .WithMany("ProfileHeaders")
-                        .HasForeignKey("JobPostId");
-
                     b.Navigation("ApplicationUser");
-
-                    b.Navigation("JobPost");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.WishList", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.WishList", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.JobPost", "JobPosts")
-                        .WithMany("WishLists")
+                    b.HasOne("TuyenDungWeb.Models.JobPost", "JobPost")
+                        .WithMany()
                         .HasForeignKey("JobPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("JobPosts");
+                    b.Navigation("JobPost");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.ApplicationUser", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("TuyenDungWeb.Model.Company", "Company")
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Model.Company", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Company", b =>
                 {
-                    b.Navigation("CompanyComments");
-
                     b.Navigation("CompanyImages");
-
-                    b.Navigation("JobPosts");
-                });
-
-            modelBuilder.Entity("TuyenDungWeb.Model.JobPost", b =>
-                {
-                    b.Navigation("JobPostComments");
-
-                    b.Navigation("JobPostLikes");
-
-                    b.Navigation("ProfileHeaders");
-
-                    b.Navigation("WishLists");
-                });
-
-            modelBuilder.Entity("TuyenDungWeb.Model.JobType", b =>
-                {
-                    b.Navigation("JobPosts");
                 });
 #pragma warning restore 612, 618
         }

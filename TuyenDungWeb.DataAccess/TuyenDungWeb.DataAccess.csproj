@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TuyenDungWeb.Model\TuyenDungWeb.Model.csproj" />
+    <ProjectReference Include="..\TuyenDungWeb.Models\TuyenDungWeb.Models.csproj" />
     <ProjectReference Include="..\TuyenDungWeb.Utility\TuyenDungWeb.Utility.csproj" />
   </ItemGroup>
 

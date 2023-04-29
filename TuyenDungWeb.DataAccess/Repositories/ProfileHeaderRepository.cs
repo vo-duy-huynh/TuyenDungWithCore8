@@ -1,6 +1,6 @@
 ﻿using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Model;
+using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
@@ -19,7 +19,7 @@ namespace TuyenDungWeb.DataAccess.Repositories
             _db.ProfileHeaders.Update(obj);
         }
 
-        public void UpdateStatus(Guid id, string ProfileStatus)
+        public void UpdateStatus(int id, string ProfileStatus)
         {
             var ProfileFromDb = _db.ProfileHeaders.FirstOrDefault(u => u.Id == id);
             if (ProfileFromDb != null)
@@ -28,7 +28,7 @@ namespace TuyenDungWeb.DataAccess.Repositories
             }
         }
 
-        public void UpdateToSession(Guid id, string session)
+        public void UpdateToSession(int id, string session)
         {
             throw new NotImplementedException();
         }

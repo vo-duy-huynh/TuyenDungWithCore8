@@ -1,4 +1,4 @@
-﻿using TuyenDungWeb.Model;
+﻿using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories.IRepository
 {

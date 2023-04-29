@@ -1,6 +1,6 @@
 ﻿using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Model;
+using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
@@ -16,7 +16,7 @@ namespace TuyenDungWeb.DataAccess.Repositories
 
         public void Update(CompanyImage obj)
         {
-            _db.ProductImages.Update(obj);
+            _db.CompanyImages.Update(obj);
         }
     }
 }
