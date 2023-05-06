@@ -11,6 +11,11 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             _db = db;
         }
+        public ApplicationUser GetCompanyId(string id)
+        {
+            var userInCompany = _db.ApplicationUsers.FirstOrDefault(p => p.Id == id);
+            return userInCompany;
+        }
         public void Update(ApplicationUser applicationUser)
         {
             _db.ApplicationUsers.Update(applicationUser);

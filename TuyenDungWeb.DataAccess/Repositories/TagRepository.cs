@@ -12,7 +12,11 @@ namespace TuyenDungWeb.DataAccess.Repository
         {
             _db = db;
         }
-
+        public Tag GetById(int id)
+        {
+            var tag = _db.Tags.Find(id);
+            return tag;
+        }
 
 
         public void Update(Tag obj)

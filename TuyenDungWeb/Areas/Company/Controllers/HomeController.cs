@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using TuyenDungWeb.Models;
 
-namespace TuyenDungWeb.Controllers
+namespace TuyenDungWeb.Areas.Company.Controllers
 {
+    [Area("Company")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -9,7 +9,7 @@ namespace TuyenDungWeb.Models
         [Required]
         public string? Name { get; set; }
         public string? DisplayName { get; set; }
-        public virtual ICollection<JobPost> JobPosts { get; set; }
-        public virtual ICollection<Company> Companies { get; set; }
+        public virtual ICollection<JobPost>? JobPosts { get; set; }
+        public virtual ICollection<Company>? Companies { get; set; }
     }
 }

@@ -6,6 +6,7 @@ namespace TuyenDungWeb.Models
     public class CompanyComment
     {
         public int Id { get; set; }
+        public double Rate { get; set; }
         public string? Description { get; set; }
         public int CompanyId { get; set; }
         [ForeignKey("CompanyId")]

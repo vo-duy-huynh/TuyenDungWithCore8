@@ -10,13 +10,9 @@ namespace TuyenDungWeb.Models
         [Required]
         public string Heading { get; set; }
         [Required]
-        public string PageTitle { get; set; }
-        [Required]
         public string Content { get; set; }
-        [Required]
-        public string ShortDescription { get; set; }
-        [Required]
-        public string UrlHandle { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? UrlHandle { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? EndDate { get; set; }
         [Required]
@@ -25,17 +21,17 @@ namespace TuyenDungWeb.Models
         public string? Gender { get; set; }
         public string? Salary { get; set; }
         public string? Location { get; set; }
-        public int JobTypeId { get; set; }
+        public int? JobTypeId { get; set; }
         [ForeignKey("JobTypeId")]
         [ValidateNever]
         public JobType JobType { get; set; }
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         [ForeignKey("CompanyId")]
         [ValidateNever]
         public Company Company { get; set; }
         public bool? Visible { get; set; }
         public bool? Status { get; set; }
-        public int JobId { get; set; }
+        public int? JobId { get; set; }
         [ForeignKey("JobId")]
         [ValidateNever]
         public Job Job { get; set; }

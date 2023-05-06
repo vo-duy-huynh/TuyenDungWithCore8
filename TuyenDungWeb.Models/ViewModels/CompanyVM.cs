@@ -8,14 +8,14 @@ namespace TuyenDungWeb.Models.ViewModels
         public Company Company { get; set; }
 
         [ValidateNever]
-        public IEnumerable<SelectListItem> CompanyComments { get; set; }
+        public IEnumerable<SelectListItem>? CompanyComments { get; set; }
         [ValidateNever]
-        public IEnumerable<SelectListItem> CompanyImages { get; set; }
+        public IEnumerable<SelectListItem>? CompanyImages { get; set; }
         public IEnumerable<SelectListItem> Companies { get; set; }
         [ValidateNever]
         // Collect Tag
         public string[] SelectedTags { get; set; } = Array.Empty<string>();
-        public IEnumerable<SelectListItem> Tags { get; set; }
+        public IEnumerable<SelectListItem>? Tags { get; set; }
 
     }
 }

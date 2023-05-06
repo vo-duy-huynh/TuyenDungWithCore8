@@ -2,31 +2,32 @@
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 
-namespace TuyenDungWeb.Controllers
+namespace TuyenDungWeb.Areas.Admin.Controllers
 {
-    public class JobController : Controller
+    [Area("Admin")]
+    public class TagController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public JobController(IUnitOfWork unitOfWork)
+        public TagController(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            return View(_unitOfWork.Job.GetAll());
+            return View(_unitOfWork.Tag.GetAll());
         }
         public IActionResult Create()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Job obj)
+        public IActionResult Create(Tag obj)
         {
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Job.Add(obj);
+                _unitOfWork.Tag.Add(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Thêm thành công";
                 return RedirectToAction("Index");
@@ -41,22 +42,22 @@ namespace TuyenDungWeb.Controllers
             {
                 return NotFound();
             }
-            Job? JobFromDb = _unitOfWork.Job.Get(u => u.Id == id);
-            //Job? JobFromDb1 = _db.Categories.FirstOrDefault(u=>u.Id==id);
-            //Job? JobFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();
+            Tag? TagFromDb = _unitOfWork.Tag.Get(u => u.Id == id);
+            //Tag? TagFromDb1 = _db.Categories.FirstOrDefault(u=>u.Id==id);
+            //Tag? TagFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();
 
-            if (JobFromDb == null)
+            if (TagFromDb == null)
             {
                 return NotFound();
             }
-            return View(JobFromDb);
+            return View(TagFromDb);
         }
         [HttpPost]
-        public IActionResult Edit(Job obj)
+        public IActionResult Edit(Tag obj)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Job.Update(obj);
+                _unitOfWork.Tag.Update(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Cập nhật thành công";
                 return RedirectToAction("Index");
@@ -71,23 +72,23 @@ namespace TuyenDungWeb.Controllers
             {
                 return NotFound();
             }
-            Job? JobFromDb = _unitOfWork.Job.Get(u => u.Id == id);
+            Tag? TagFromDb = _unitOfWork.Tag.Get(u => u.Id == id);
 
-            if (JobFromDb == null)
+            if (TagFromDb == null)
             {
                 return NotFound();
             }
-            return View(JobFromDb);
+            return View(TagFromDb);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Job? obj = _unitOfWork.Job.Get(u => u.Id == id);
+            Tag? obj = _unitOfWork.Tag.Get(u => u.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Job.Remove(obj);
+            _unitOfWork.Tag.Remove(obj);
             _unitOfWork.Save();
             TempData["success"] = "Xóa thành công";
             return RedirectToAction("Index");

@@ -19,7 +19,6 @@ namespace TuyenDungWeb.DataAccess.Repositories
             var objFromDb = _db.JobPosts.FirstOrDefault(u => u.Id == obj.Id);
             if (objFromDb != null)
             {
-                objFromDb.PageTitle = obj.PageTitle;
                 objFromDb.Content = obj.Content;
                 objFromDb.Heading = obj.Heading;
                 objFromDb.ShortDescription = obj.ShortDescription;

@@ -11,6 +11,7 @@ namespace TuyenDungWeb.DataAccess.Data
         {
         }
         public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<JobPostTemp> JobPostTemps { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<JobPostComment> JobPostComments { get; set; }
