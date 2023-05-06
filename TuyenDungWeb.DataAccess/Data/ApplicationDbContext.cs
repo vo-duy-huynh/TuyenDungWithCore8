@@ -17,7 +17,7 @@ namespace TuyenDungWeb.DataAccess.Data
         public DbSet<JobPostComment> JobPostComments { get; set; }
         public DbSet<CompanyComment> CompanyComments { get; set; }
         public DbSet<JobPostLike> JobPostLikes { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<AdminNotification> AdminNotifications { get; set; }
 
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobType> JobTypes { get; set; }

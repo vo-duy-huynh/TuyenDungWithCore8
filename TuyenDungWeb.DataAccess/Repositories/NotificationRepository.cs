@@ -4,7 +4,7 @@ using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
-    public class NotificationRepository : Repository<Notification>, INotificationRepository
+    public class NotificationRepository : Repository<AdminNotification>, INotificationRepository
     {
         private ApplicationDbContext _db;
         public NotificationRepository(ApplicationDbContext db) : base(db)
@@ -14,9 +14,9 @@ namespace TuyenDungWeb.DataAccess.Repositories
 
 
 
-        public void Update(Notification obj)
+        public void Update(AdminNotification obj)
         {
-            _db.Notifications.Update(obj);
+            _db.AdminNotifications.Update(obj);
         }
     }
 }

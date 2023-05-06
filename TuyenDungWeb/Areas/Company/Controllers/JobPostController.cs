@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
@@ -11,10 +12,12 @@ namespace TuyenDungWeb.Areas.Company.Controllers
     //[Authorize(Roles = SD.Role_Admin)]
     public class JobPostController : Controller
     {
+        private readonly NotificationService _notificationService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public JobPostController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        public JobPostController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, NotificationService notificationService)
         {
+            _notificationService = notificationService;
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
         }
@@ -85,11 +88,18 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             }
 
             _unitOfWork.Save();
+            // create new notification for admin
+            var message = $"New order {JobPostVM.JobPostTemp.Id} has been created and is awaiting approval.";
+            _notificationService.CreateAdminNotification(message);
 
-            TempData["success"] = "Thêm/ sửa thành công!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(OrderConfirmation));
+            //TempData["success"] = "Thêm/ sửa thành công!";
+            //return RedirectToAction("Index", "Home");
         }
-
+        public IActionResult OrderConfirmation()
+        {
+            return View();
+        }
 
 
         #region API CALLS

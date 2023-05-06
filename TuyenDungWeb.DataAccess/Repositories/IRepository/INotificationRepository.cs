@@ -2,8 +2,8 @@
 
 namespace TuyenDungWeb.DataAccess.Repositories.IRepository
 {
-    public interface INotificationRepository : IRepository<Notification>
+    public interface INotificationRepository : IRepository<AdminNotification>
     {
-        void Update(Notification obj);
+        void Update(AdminNotification obj);
     }
 }

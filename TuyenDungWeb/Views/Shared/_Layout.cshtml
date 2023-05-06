@@ -111,7 +111,7 @@
                                 <span class=""><i class=" fa fa-bell"></i></span>
                             </div>
                         </div>
-                        <span class="count-notification">0</span>
+                        <span class="count-notification" id="count-notification"></span>
                     </div>
 
                 </div>
@@ -206,6 +206,8 @@
     <script src="https://cdn.tiny.cloud/1/g28lhnxtlihu4l4a381gw7tz47voznshwbi10lmsvlekrfme/tinymce/6/tinymce.min.js" referrerpolicy="origin">
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <script src="~/js/notification.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
