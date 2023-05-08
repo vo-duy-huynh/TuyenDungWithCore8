@@ -9,11 +9,11 @@
             <div class="col-12 text-center">
                 @if (User.IsInRole(SD.Role_Admin))
                 {
-                    <h2 class="py-2 text-white">Register - ADMIN PORTAL</h2>
+                    <h2 class="py-2 text-white">Dăng ký của admin</h2>
                 }
                 else
                 {
-                    <h2 class="py-2 text-white">Register</h2>
+                    <h2 class="py-2 text-white">Đăng ký</h2>
                 }
             </div>
         </div>
@@ -75,16 +75,15 @@
                             <option disabled selected>-Chọn người dùng-</option>
                         </select>
                     </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        @*<select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">*@
-                        <select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">
-                            <option disabled selected>-Chọn công ti-</option>
-                        </select>
-                    </div>
+                    
                     @if (User.IsInRole(SD.Role_Admin))
                     {
-                        
-                        
+                        <div class="form-floating mb-3 col-md-6">
+                            @*<select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">*@
+                            <select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">
+                                <option disabled selected>-Chọn công ti-</option>
+                            </select>
+                        </div>
                     }
                     <div class="col-12">
                         <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>

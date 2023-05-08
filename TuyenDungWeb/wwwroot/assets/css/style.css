@@ -20,8 +20,10 @@
     bottom: 45px;
     z-index: 99;
 }
+.middel_tab{
+    margin-top: 50px;
 
-
+}
 /*** Spinner ***/
 #spinner {
     opacity: 0;
@@ -367,7 +369,23 @@ color: #ffffff;
     border-color: rgba(0, 0, 0, .08);
     box-shadow: none;
 }
+.job-item1 {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    box-shadow: 0 0 45px rgba(0, 0, 0, .08);
+    transition: .5s;
+}
 
+.job-item__companyName {
+    font-size: 14px;
+    font-weight: 400;
+    color: grey;
+}
+
+.job-item1:hover {
+    border-color: rgba(0, 0, 0, .08);
+    box-shadow: none;
+}
 
 /*** Testimonial ***/
 .testimonial-carousel .owl-item .testimonial-item,

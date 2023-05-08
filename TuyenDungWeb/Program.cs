@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TuyenDungWeb.DataAccess.Data;
+using TuyenDungWeb.DataAccess.Notification;
 using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Utility;
+using TuyenDungWeb.DataAccess.Services;
+using TuyenDungWeb.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
@@ -21,27 +23,34 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
-//builder.Services.AddAuthentication().AddFacebook(option => {
+//builder.Services.AddAuthentication().AddFacebook(option =>
+//{
 //    option.AppId = "193813826680436";
 //    option.AppSecret = "8fc42ae3f4f2a4986143461d4e2da919";
 //});
-//builder.Services.AddAuthentication().AddMicrosoftAccount(option => {
+//builder.Services.AddAuthentication().AddMicrosoftAccount(option =>
+//{
 //    option.ClientId = "ec4d380d-d631-465d-b473-1e26ee706331";
 //    option.ClientSecret = "qMW8Q~LlEEZST~SDxDgcEVx_45LJQF2cQ_rEKcSQ";
 //});
 
-//builder.Services.AddDistributedMemoryCache();
-//builder.Services.AddSession(options =>
-//{
-//    options.IdleTimeout = TimeSpan.FromMinutes(100);
-//    options.Cookie.HttpOnly = true;
-//    options.Cookie.IsEssential = true;
-//});
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 //builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<NotificationService>();
+var emailConfig = builder.Configuration
+    .GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddScoped<IEmailService, EmailService>();
 //builder.Services.AddScoped<IEmailSender, EmailSender>();
 var app = builder.Build();
 

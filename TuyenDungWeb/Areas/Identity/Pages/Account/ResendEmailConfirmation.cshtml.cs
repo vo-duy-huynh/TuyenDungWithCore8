@@ -2,17 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
+using TuyenDungWeb.DataAccess.Services;
 
 namespace TuyenDungWeb.Areas.Identity.Pages.Account
 {
@@ -20,9 +18,9 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
     public class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailSender;
 
-        public ResendEmailConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<IdentityUser> userManager, IEmailService emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -64,7 +62,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+                ModelState.AddModelError(string.Empty, "Đã gửi email xác minh. Vui lòng kiểm tra email của bạn.");
                 return Page();
             }
 
@@ -76,12 +74,10 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 pageHandler: null,
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            var messageEmail = new TuyenDungWeb.Models.Message(new string[] { Input.Email }, "Xác nhận email", $"Hãy xác nhận email bằng cách bấm vào <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>đây nhé!</a>");
+            _emailSender.SendEmail(messageEmail);
 
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+            ModelState.AddModelError(string.Empty, "Đã gửi email xác minh. Vui lòng kiểm tra email của bạn.");
             return Page();
         }
     }

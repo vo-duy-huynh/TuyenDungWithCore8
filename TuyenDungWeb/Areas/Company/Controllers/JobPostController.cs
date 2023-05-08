@@ -66,7 +66,10 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             JobPostVM.JobPostTemp.JobId = 1;
 
             JobPostVM.JobPostTemp.CreatedDate = DateTime.Now;
-
+            JobPostVM.JobPostTemp.IsApprove = false;
+            var companyName = _unitOfWork.Company.GetById(int.Parse(CompanyId)).Name;
+            var message = $"Công ty {companyName} đã đăng tin và đang chờ chấp thuận.";
+            JobPostVM.JobPostTemp.Message = message;
             if (CompanyId == null)
             {
                 foreach (var selectedCompanyItem in JobPostVM.SelectedCompanies)
@@ -89,9 +92,8 @@ namespace TuyenDungWeb.Areas.Company.Controllers
 
             _unitOfWork.Save();
             // create new notification for admin
-            var message = $"New order {JobPostVM.JobPostTemp.Id} has been created and is awaiting approval.";
-            _notificationService.CreateAdminNotification(message);
-
+            var notificationCount = _unitOfWork.JobPostTemp.Count();
+            _notificationService.CreateAdminNotification(message, notificationCount);
             return RedirectToAction(nameof(OrderConfirmation));
             //TempData["success"] = "Thêm/ sửa thành công!";
             //return RedirectToAction("Index", "Home");
@@ -107,8 +109,8 @@ namespace TuyenDungWeb.Areas.Company.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<JobPost> objJobPostList = _unitOfWork.JobPost.GetAll().ToList();
-            return Json(new { data = objJobPostList });
+            List<JobPostTemp> objJobPostTempList = _unitOfWork.JobPostTemp.GetAll().ToList();
+            return Json(new { data = objJobPostTempList.Count() });
         }
 
 

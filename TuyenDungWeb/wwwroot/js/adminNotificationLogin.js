@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "ajax": { url: '/admin/company/getall' },
+        "ajax": { url: '/company/jobpost/getall' },
         "columns": [
             { data: 'name', "width": "15%" },
             { data: 'companyEmail', "width": "15%" },
@@ -24,27 +24,4 @@ function loadDataTable() {
             }
         ]
     });
-}
-
-function Delete(url) {
-    Swal.fire({
-        title: 'Bạn có muốn xóa?',
-        text: "Bạn có muốn xóa dòng này không?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Vâng, hãy xóa nó!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                success: function (data) {
-                    dataTable.ajax.reload();
-                    toastr.success(data.message);
-                }
-            })
-        }
-    })
 }

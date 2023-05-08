@@ -22,5 +22,7 @@ namespace TuyenDungWeb.Models
         public int JobTypeId { get; set; }
         public int CompanyId { get; set; }
         public int? JobId { get; set; }
+        public string Message { get; set; }
+        public bool IsApprove { get; set; }
     }
 }

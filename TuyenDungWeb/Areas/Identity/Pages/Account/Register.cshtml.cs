@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
+using TuyenDungWeb.DataAccess.Services;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Utility;
 
@@ -26,6 +27,8 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IEmailService _emailService;
+
         //private readonly IEmailSender _emailSender;
 
         public RegisterModel(
@@ -34,6 +37,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
+            IEmailService emailService,
             //IEmailSender emailSender,
             IUnitOfWork unitOfWork)
         {
@@ -44,6 +48,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
+            _emailService = emailService;
             //_emailSender = emailSender;
         }
 
@@ -127,8 +132,8 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             }
             Input = new()
             {
-                //RoleList = _roleManager.Roles.Where(u => u.Name != SD.Role_Admin).Select(x => x.Name).Select(i => new SelectListItem
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                RoleList = _roleManager.Roles.Where(u => u.Name != SD.Role_Admin).Select(x => x.Name).Select(i => new SelectListItem
+                //RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
                 {
                     Text = i,
                     Value = i
@@ -167,6 +172,8 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    var messageEmail = new TuyenDungWeb.Models.Message(new string[] { Input.Email }, "Đăng kí thành công", $"Tài Khoản: {Input.Email}, Mật khẩu: {Input.Password} Hãy khám phá website nhé!!!.");
+                    _emailService.SendEmail(messageEmail);
                     if (!String.IsNullOrEmpty(Input.Role))
                     {
                         await _userManager.AddToRoleAsync(user, Input.Role);

@@ -1,4 +1,4 @@
-﻿var dataTable;
+var dataTable;
 
 $(document).ready(function () {
     loadDataTable();
@@ -6,21 +6,20 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "ajax": { url: '/admin/company/getall' },
+        "ajax": { url: '/admin/jobposttemp/getall' },
         "columns": [
-            { data: 'name', "width": "15%" },
-            { data: 'companyEmail', "width": "15%" },
-            { data: 'phoneNumber', "width": "10%" },
-            { data: 'location', "width": "25%" },
+            { "data": "heading", "width": "30%" },
+            { "data": "shortDescription", "width": "30%" },
+            { "data": "numberOfRecruiting", "width": "15%" },
             {
                 data: 'id',
                 "render": function (data) {
                     return `<div class="w-75 btn-group" role="group">
-                     <a href="/admin/company/upsert?id=${data}" class="btn btn-primary"> <i class="bi bi-pencil-square"></i>Cập nhật</a>               
-                     <a onClick=Delete('/admin/company/delete/${data}') class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Xóa</a>
+                     <a href="/admin/jobposttemp/upsert?id=${data}" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>               
+                     <a onClick=Delete('/admin/jobposttemp/delete/${data}') class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
                     </div>`
                 },
-                "width": "35%"
+                "width": "25%"
             }
         ]
     });
@@ -28,13 +27,13 @@ function loadDataTable() {
 
 function Delete(url) {
     Swal.fire({
-        title: 'Bạn có muốn xóa?',
-        text: "Bạn có muốn xóa dòng này không?",
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Vâng, hãy xóa nó!'
+        confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({

@@ -3,12 +3,13 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Encodings.Web;
+using TuyenDungWeb.DataAccess.Services;
 
 namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
 {
@@ -16,12 +17,12 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        //private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailSender;
 
         public EmailModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IEmailSender emailSender)
+            IEmailService emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -125,7 +126,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
                 //    "Confirm your email",
                 //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = "Đường dẫn xác nhận đã được gửi hãy kiểm tra trong email.";
                 return RedirectToPage();
             }
 
@@ -156,12 +157,14 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
+            var messageEmail = new TuyenDungWeb.Models.Message(new string[] { email }, "Xác nhận email", $"Hãy xác nhận email bằng cách bấm vào <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>đây nhé!</a>");
+            _emailSender.SendEmail(messageEmail);
             //await _emailSender.SendEmailAsync(
             //    email,
             //    "Confirm your email",
             //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "Đã gửi mail. Hãy kiểm tra email.";
             return RedirectToPage();
         }
     }

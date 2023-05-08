@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using TuyenDungWeb.DataAccess.Data;
+using TuyenDungWeb.DataAccess.Notification;
 using TuyenDungWeb.Models;
-using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
     public interface INotificationService
     {
-        void CreateAdminNotification(string message);
+        void CreateAdminNotification(string message, int notificationCount);
     }
 
     public class NotificationService : INotificationService
@@ -21,20 +21,23 @@ namespace TuyenDungWeb.DataAccess.Repositories
             _hubContext = hubContext;
         }
 
-        public void CreateAdminNotification(string message)
+        public void CreateAdminNotification(string message, int notificationCount)
         {
-            var notification = new AdminNotification
+            List<JobPostTemp> adminNotifications = _dbContext.JobPostTemps.OrderBy(n => n.CreatedDate).Where(n => n.IsApprove == false).ToList();
+            //take message and create date from adminNotifications
+            List<string> messageList = new List<string>();
+            foreach (var item in adminNotifications)
             {
-                Message = message,
-                CreatedDate = DateTime.UtcNow
-            };
+                messageList.Add(item.Message);
+            }
 
-            _dbContext.AdminNotifications.Add(notification);
-            _dbContext.SaveChanges();
 
-            var notificationCount = _dbContext.AdminNotifications.Count(n => !n.IsRead);
+            _hubContext.Clients.All.SendAsync("ReceiveNotification", message, notificationCount, messageList);
+        }
 
-            _hubContext.Clients.All.SendAsync("ReceiveNotification", message, notificationCount);
+        public int GetUnreadNotificationCountForUser()
+        {
+            return _dbContext.JobPostTemps.Where(n => n.IsApprove == false).Count();
         }
     }
 

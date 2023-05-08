@@ -1,22 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
+using TuyenDungWeb.Models.ViewModels;
 
 namespace TuyenDungWeb.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            JobPostVM jobs = new()
+            {
+                JobPosts = _unitOfWork.JobPost.GetAll().ToList(),
+                Companies = _unitOfWork.Company.GetAll().ToList(),
+                JobTypes = _unitOfWork.JobType.GetAll().ToList(),
+                CompanyImages = _unitOfWork.CompanyImage.GetAll().ToList()
+            };
+            return View(jobs);
         }
 
         public IActionResult Privacy()

@@ -14,7 +14,11 @@ namespace TuyenDungWeb.DataAccess.Repository
         }
 
 
-
+        public Company GetById(int id)
+        {
+            var company = _db.Companies.Find(id);
+            return company;
+        }
         public void Update(Company obj)
         {
             _db.Companies.Update(obj);

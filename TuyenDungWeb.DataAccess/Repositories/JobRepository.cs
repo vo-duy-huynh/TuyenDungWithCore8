@@ -11,6 +11,12 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             _db = db;
         }
+        public Job GetById(int id)
+        {
+            var job = _db.Jobs.Find(id);
+            return job;
+        }
+
         public void Update(Job obj)
         {
             _db.Jobs.Update(obj);
