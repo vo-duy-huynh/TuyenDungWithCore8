@@ -11,8 +11,10 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             _db = db;
         }
-
-
+        public List<CompanyImage> GetCompanyImagesForCompany(int? companyId)
+        {
+            return _db.CompanyImages.Where(x => x.CompanyId == companyId).ToList();
+        }
 
         public void Update(CompanyImage obj)
         {

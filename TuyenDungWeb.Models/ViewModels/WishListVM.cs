@@ -2,8 +2,8 @@
 {
     public class WishListVM
     {
-        public IEnumerable<WishList> WishList { get; set; }
-        public ProfileHeader ProfileHeader { get; set; }
+        public int JobPostId { get; set; }
+        public bool Added { get; set; }
 
     }
 }

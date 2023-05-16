@@ -9,17 +9,19 @@
     }
 }
 
-<h1>Quản Lý Thông Tin Tài Khoản</h1>
+<h3 class="p-5 wow fadeIn">Quản Lý Thông Tin Tài Khoản</h3>
 
-<div>
-    <h2>Thay đổi cài đặt tài khoản của bạn</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
+<div class="container-fluid wow fadeIn" data-wow-delay="0.1s" style="min-height: 80%;">
+    <div class="container" style="padding-left: 55px;">
+        <h2>Thay đổi cài đặt tài khoản của bạn</h2>
+        <hr />
+        <div class="row">
+            <div class="col-md-3">
+                <partial name="_ManageNav" />
+            </div>
+            <div class="col-md-9">
+                @RenderBody()
+            </div>
         </div>
     </div>
 </div>

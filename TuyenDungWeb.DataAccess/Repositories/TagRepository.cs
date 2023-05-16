@@ -17,8 +17,11 @@ namespace TuyenDungWeb.DataAccess.Repository
             var tag = _db.Tags.Find(id);
             return tag;
         }
-
-
+        public Tag GetFirstOrDefaultTagName(string tagName)
+        {
+            var tag = _db.Tags.FirstOrDefault(x => x.Name == tagName);
+            return tag;
+        }
         public void Update(Tag obj)
         {
             _db.Tags.Update(obj);

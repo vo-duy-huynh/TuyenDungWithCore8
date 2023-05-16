@@ -11,7 +11,7 @@
     <div class="card-body p-4">
         <form method="post" class="row" enctype="multipart/form-data">
             <input asp-for="Company.Id" hidden />
-
+            <input type="text" id="tagNames" name="tagNames" hidden/>
             <div class="row">
                 <div class="col-10">
                     <div class="border p-3">
@@ -41,17 +41,17 @@
                             <label asp-for="Company.Location" class="ms-2"></label>
                             <span asp-validation-for="Company.Location" class="text-danger"></span>
                         </div>
-
-                        <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedTags" asp-items="@Model.Tags" class="form-select border-0 shadow">
-                            </select>
-                            <label asp-for="Company.Tags" class="ms-2">Chọn tag</label>
-                            <span asp-validation-for="Company.Tags" class="text-danger"></span>
-                        </div>
                         <div class="form-floating py-2 col-12">
                             <input type="file" name="files" class="form-control border-0 shadow" multiple />
                             <label asp-for="Company.CompanyImages" class="ms-2"></label>
                         </div>
+                        <div class="form-floating py-2 col-12">
+                            @Html.LabelFor(model => model.tagIds, htmlAttributes: new { @class = "ms-2" })
+                            <select asp-for="@Model.tagIds" asp-items="@Model.Tags" id="tagIds" multiple name="tagIds" placeholder="Chon tag" data-search="true" data-silent-initial-value-set="true">
+                            </select>
+                            
+                        </div>
+                       
                         <div class="row pt-2">
                             <div class="col-6 col-md-3">
                                 @if (Model.Company.Id != 0)
@@ -104,6 +104,35 @@
             plugins: 'anchor autolink charmap codesample emoticons  lists   table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
         });
+    </script>
+    <script src="~/assets/dist/virtual-select.min.js"></script>
+    <script type="text/javascript" >
+            VirtualSelect.init({
+            ele: '#tagIds'
+            });
+
+    </script>
+    <script>
+        localStorage.setItem('tagIds', document.querySelector('.vscomp-value').textContent);
+        document.getElementById("tagNames").value = localStorage.getItem('tagIds');
+        // Lấy phần tử div có lớp vscomp-value
+        var target = document.querySelector('.vscomp-value');
+
+        // Tạo một MutationObserver instance
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                // Lấy giá trị mới của phần tử div và lưu vào localStorage với key là "tagIds"
+                localStorage.setItem('tagIds', mutation.target.textContent);
+                //set value for input id="tagNames"
+                document.getElementById("tagNames").value = localStorage.getItem('tagIds');
+                //delete localStorage
+                localStorage.clear();
+            });
+        });
+
+         //Cấu hình và bắt đầu theo dõi phần tử
+        var config = { attributes: true, childList: true, characterData: true };
+        observer.observe(target, config);
     </script>
     @{
         <partial name="_ValidationScriptsPartial" />

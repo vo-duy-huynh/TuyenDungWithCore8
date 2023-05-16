@@ -6,6 +6,9 @@ namespace TuyenDungWeb.Models.ViewModels
     public class CompanyVM
     {
         public Company Company { get; set; }
+        public List<Company> CompanyList { get; set; }
+        public List<CompanyImage> CompanyImageList { get; set; }
+        public List<CompanyTemp> jobPostCount { get; set; }
 
         [ValidateNever]
         public IEnumerable<SelectListItem>? CompanyComments { get; set; }
@@ -14,7 +17,7 @@ namespace TuyenDungWeb.Models.ViewModels
         public IEnumerable<SelectListItem> Companies { get; set; }
         [ValidateNever]
         // Collect Tag
-        public string[] SelectedTags { get; set; } = Array.Empty<string>();
+        public int[] tagIds { get; set; }
         public IEnumerable<SelectListItem>? Tags { get; set; }
 
     }

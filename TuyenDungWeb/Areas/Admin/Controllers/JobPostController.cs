@@ -26,6 +26,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
+            List<int> tagIds = new List<int>();
             JobPostVM JobPostVM = new()
             {
                 JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
@@ -38,7 +39,17 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
-                JobPost = new JobPost()
+                JobList = _unitOfWork.Job.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                })
+
             };
             if (id == null || id == 0)
             {
@@ -47,37 +58,54 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             }
             else
             {
+                var jobPost = _unitOfWork.JobPost.FirstOrDefault(id);
+                var jobType = _unitOfWork.JobType.GetById(jobPost.JobTypeId);
+                jobPost.Tags.ToList().ForEach(t => tagIds.Add(t.Id));
+                JobPostVM.JobPost = jobPost;
+                JobPostVM.tagIds = tagIds.ToArray();
+                JobPostVM.SelectedCompany = jobPost.Company.Name;
+                JobPostVM.SelectedJob = jobPost.Job.Name;
+                JobPostVM.SelectedJobType = jobType.Name;
+                JobPostVM.SelectedCompany = jobPost.CompanyId.ToString();
+                JobPostVM.SelectedJob = jobPost.JobId.ToString();
+                JobPostVM.SelectedJobType = jobPost.JobTypeId.ToString();
                 return View(JobPostVM);
             }
 
         }
         [HttpPost]
-        public IActionResult Upsert(JobPostVM JobPostVM, string CompanyId)
+        public IActionResult Upsert(JobPostVM JobPostVM, string tagNames)
         {
             JobType existingJobType = new JobType();
-            foreach (var selectedJobTypeItem in JobPostVM.SelectedJobTypes)
+            //existingJobType = _unitOfWork.JobType.GetById(JobPostVM.SelectedJobTypes[0]);
+            JobPostVM.JobPost.JobTypeId = int.Parse(JobPostVM.SelectedJobType);
+            JobPostVM.JobPost.CompanyId = int.Parse(JobPostVM.SelectedCompany);
+            JobPostVM.JobPost.JobId = int.Parse(JobPostVM.SelectedJob);
+            var tagNamesArray = tagNames.Split(", ");
+            var selectedTags = new List<Tag>();
+            foreach (var tagName in tagNamesArray)
             {
-                var selectedJobTypeId = int.Parse(selectedJobTypeItem);
-                existingJobType = _unitOfWork.JobType.GetById(selectedJobTypeId);
+                var existingTag = _unitOfWork.Tag.GetFirstOrDefaultTagName(tagName);
+                if (existingTag != null)
+                {
+                    selectedTags.Add(existingTag);
+                }
             }
-            JobPostVM.JobPost.JobTypeId = existingJobType.Id;
-
-            foreach (var selectedCompanyItem in JobPostVM.SelectedCompanies)
-            {
-                JobPostVM.JobPost.CompanyId = int.Parse(selectedCompanyItem);
-            }
+            JobPostVM.JobPost.Tags = selectedTags;
             if (JobPostVM.JobPost.Id == 0)
             {
+                JobPostVM.JobPost.CreatedDate = DateTime.Now;
                 _unitOfWork.JobPost.Add(JobPostVM.JobPost);
+                TempData["success"] = "Thêm thành công!";
             }
             else
             {
+                JobPostVM.JobPost.CreatedDate = _unitOfWork.JobPost.FirstOrDefault(JobPostVM.JobPost.Id).CreatedDate;
                 _unitOfWork.JobPost.Update(JobPostVM.JobPost);
+                TempData["success"] = "Cập nhật thành công!";
             }
 
             _unitOfWork.Save();
-
-            TempData["success"] = "Thêm/ sửa thành công!";
             return RedirectToAction("Index");
         }
 

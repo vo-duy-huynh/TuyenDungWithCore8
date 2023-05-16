@@ -1,0 +1,46 @@
+﻿.form-select {
+    position: relative;
+    display: inline-block;
+}
+
+    .form-select select {
+        display: none;
+    }
+
+    .form-select .select-checkboxes {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-top: none;
+        overflow-y: auto;
+        max-height: 200px;
+        z-index: 1;
+    }
+
+        .form-select .select-checkboxes label {
+            display: block;
+            padding: 3px 20px;
+            cursor: pointer;
+        }
+
+            .form-select .select-checkboxes label:hover {
+                background-color: #f0f0f0;
+            }
+
+        .form-select .select-checkboxes input[type="checkbox"] {
+            display: none;
+        }
+
+    .form-select .select-all {
+        display: block;
+        padding: 3px 20px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .form-select .select-all:hover {
+            background-color: #f0f0f0;
+        }

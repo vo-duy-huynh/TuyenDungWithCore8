@@ -12,7 +12,7 @@ namespace TuyenDungWeb.DataAccess.Repositories
             _db = db;
         }
 
-        public JobType GetById(int id)
+        public JobType GetById(int? id)
         {
             var job = _db.JobTypes.Find(id);
             return job;

@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
@@ -20,44 +18,136 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
         }
         public IActionResult Index()
         {
-            List<TuyenDungWeb.Models.Company> objCompanyList = _unitOfWork.Company.GetAll().ToList();
-            return View(objCompanyList);
-        }
+            var objCompanyList = _unitOfWork.Company.GetAll().ToList();
+            CompanyVM companyVM = new CompanyVM();
+            var companyImages = _unitOfWork.CompanyImage.GetAll().ToList();
+            companyVM.CompanyList = objCompanyList;
+            companyVM.CompanyImageList = companyImages;
+            companyVM.jobPostCount = new List<CompanyTemp>();
+            foreach (var item in objCompanyList)
+            {
+                CompanyTemp companyTemp = new CompanyTemp();
+                int count;
+                try
+                {
+                    count = _unitOfWork.JobPost.GetAll(filter: u => u.CompanyId == item.Id).Count();
+                }
+                catch
+                {
 
+                    count = 0;
+                }
+                companyTemp.CompanyId = item.Id;
+                companyTemp.jobPostCount = count;
+                companyVM.jobPostCount.Add(companyTemp);
+            }
+            return View(companyVM);
+        }
+        public IActionResult TopCompany()
+        {
+            var objCompanyList = _unitOfWork.Company.GetAll().ToList();
+            CompanyVM companyVM = new CompanyVM();
+            var companyImages = _unitOfWork.CompanyImage.GetAll().ToList();
+            companyVM.CompanyList = objCompanyList;
+            companyVM.CompanyImageList = companyImages;
+            companyVM.jobPostCount = new List<CompanyTemp>();
+            foreach (var item in objCompanyList)
+            {
+                CompanyTemp companyTemp = new CompanyTemp();
+                int count;
+                try
+                {
+                    count = _unitOfWork.JobPost.GetAll(filter: u => u.CompanyId == item.Id).Count();
+                }
+                catch
+                {
+
+                    count = 0;
+                }
+                companyTemp.CompanyId = item.Id;
+                companyTemp.jobPostCount = count;
+                companyVM.jobPostCount.Add(companyTemp);
+            }
+            return View(companyVM);
+        }
         public IActionResult Detail(int? id)
         {
-            CompanyDetailVM CompanyDetailVM = new()
+            var jobPosts = _unitOfWork.JobPost.GetAll(filter: u => u.CompanyId == id).OrderByDescending(x => x.CreatedDate).ToList();
+            var company = _unitOfWork.Company.FirstOrDefault(id);
+            var wishList = _unitOfWork.WishList.GetAll().ToList();
+            var companyComments = _unitOfWork.CompanyComment.GetAll(filter: u => u.CompanyId == id).ToList();
+            var applicationUsers = _unitOfWork.ApplicationUser.GetAll().ToList();
+            JobPostVM jobs = new()
             {
-                Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                }),
-                Company = new TuyenDungWeb.Models.Company(),
-                CompanyComments = _unitOfWork.CompanyComment.GetAll(filter: u => u.CompanyId == id, includeProperties: "Company"),
+                JobPosts = jobPosts,
+                Companies = _unitOfWork.Company.GetAll().ToList(),
+                JobTypes = _unitOfWork.JobType.GetAll().ToList(),
+                CompanyImages = _unitOfWork.CompanyImage.GetAll(filter: u => u.CompanyId == id).ToList(),
+                WistList = wishList,
+                Company = company,
+                CompanyComments = companyComments,
+                ApplicationUsers = applicationUsers,
             };
-            if (id == null || id == 0)
+            jobs.WishListVM = new List<WishListVM>();
+            WishListVM wishListVM;
+            //get userId is loging
+            string userId;
+            if (User.Identity.Name != null)
             {
-                //create
-                return View(CompanyDetailVM);
+                userId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).Id;
             }
             else
             {
-                //update
-                CompanyDetailVM.Company = _unitOfWork.Company.Get(u => u.Id == id, includeProperties: "CompanyImages");
-                return View(CompanyDetailVM);
+                userId = null;
             }
+            foreach (var item in jobs.JobPosts)
+            {
+                WishList wishListTemp;
+                wishListVM = new WishListVM();
+                if (userId != null)
+                {
+                    wishListTemp = jobs.WistList.FirstOrDefault(u => u.JobPostId == item.Id && u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    wishListTemp = null;
+                }
+                if (wishListTemp != null)
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = true;
+                }
+                else
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = false;
+                }
+                jobs.WishListVM.Add(wishListVM);
+            }
+            if (User.Identity.Name != null && _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).FullName != null)
+            {
+                ViewBag.email = User.Identity.Name;
+                ViewBag.fullname = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).FullName;
+            }
+            else
+            {
+                ViewBag.email = null;
+                ViewBag.fullname = null;
+            }
+            return View(jobs);
 
         }
         [HttpPost]
-        public IActionResult Insert(CompanyDetailVM CompanyDetailVM)
+        [ValidateAntiForgeryToken]
+        //[Authorize]
+        public IActionResult Comment(string name, string email, string rating, string comment, string companyIdInForm)
         {
             CompanyComment companyComment = new CompanyComment();
-            companyComment.CompanyId = CompanyDetailVM.Company.Id;
+            companyComment.CompanyId = int.Parse(companyIdInForm);
             companyComment.DateAdded = DateTime.Now;
-            companyComment.Description = CompanyDetailVM.Description;
-            companyComment.Rate = 5;
-            companyComment.UserId = "huynhpro";
+            companyComment.Description = comment;
+            companyComment.Rate = double.Parse(rating);
+            companyComment.UserId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == email).Id;
             _unitOfWork.CompanyComment.Add(companyComment);
             _unitOfWork.Save();
             TempData["success"] = "Thêm bình luận thành công!";

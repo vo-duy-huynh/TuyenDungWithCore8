@@ -20,13 +20,52 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            var jobPosts = _unitOfWork.JobPost.GetAll().ToList();
+            var wishList = _unitOfWork.WishList.GetAll().ToList();
             JobPostVM jobs = new()
             {
-                JobPosts = _unitOfWork.JobPost.GetAll().ToList(),
+                JobPosts = jobPosts,
                 Companies = _unitOfWork.Company.GetAll().ToList(),
                 JobTypes = _unitOfWork.JobType.GetAll().ToList(),
-                CompanyImages = _unitOfWork.CompanyImage.GetAll().ToList()
+                CompanyImages = _unitOfWork.CompanyImage.GetAll().ToList(),
+                WistList = wishList,
             };
+            jobs.WishListVM = new List<WishListVM>();
+            WishListVM wishListVM;
+            //get userId is loging
+            string userId;
+            if (User.Identity.Name != null)
+            {
+                userId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).Id;
+            }
+            else
+            {
+                userId = null;
+            }
+            foreach (var item in jobs.JobPosts)
+            {
+                WishList wishListTemp;
+                wishListVM = new WishListVM();
+                if (userId != null)
+                {
+                    wishListTemp = jobs.WistList.FirstOrDefault(u => u.JobPostId == item.Id && u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    wishListTemp = null;
+                }
+                if (wishListTemp != null)
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = true;
+                }
+                else
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = false;
+                }
+                jobs.WishListVM.Add(wishListVM);
+            }
             return View(jobs);
         }
 

@@ -42,12 +42,12 @@
                             <span asp-validation-for="Company.Location" class="text-danger"></span>
                         </div>
 
-                        <div class="form-floating py-2 col-12">
+                        @*<div class="form-floating py-2 col-12">
                             <select asp-for="@Model.SelectedTags" asp-items="@Model.Tags" class="form-select border-0 shadow">
                             </select>
                             <label asp-for="Company.Tags" class="ms-2">Chọn tag</label>
                             <span asp-validation-for="Company.Tags" class="text-danger"></span>
-                        </div>
+                        </div>*@
                         <div class="form-floating py-2 col-12">
                             <input type="file" name="files" class="form-control border-0 shadow" multiple />
                             <label asp-for="Company.CompanyImages" class="ms-2"></label>

@@ -46,14 +46,15 @@
             <div class="col-md-10">
                 <div class="row g-2">
                     <div class="col-md-4">
-                        <input type="text" class="form-control border-0" placeholder="Nhập vào công ty hoặc vị trí..." />
+                        <input type="text" id="searchInHome" name="searchInHome" class="form-control border-0" placeholder="Nhập vào công ty hoặc vị trí..." />
                     </div>
                     <div class="col-md-4">
                         <select class="form-select border-0">
                             <option selected>Công ty</option>
-                            <option value="1">FPT</option>
-                            <option value="2">Vietcombank</option>
-                            <option value="3">Intel</option>
+                            @foreach (var company in Model.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -184,7 +185,7 @@
                 <div id="tab-1" class="tab-pane fade show p-0 active job-post__list">
                     @foreach (var jobpost in Model.JobPosts)
                     {
-                        <div class="job-item p-4 mb-4">
+                        <div class="job-item p-4 mb-4" data-title="@jobpost.Heading">
                             <div class="row g-4">
                                 <div class="col-sm-12 col-md-8 d-flex align-items-center">
                                     @foreach (var companyImage in Model.CompanyImages)
@@ -220,10 +221,23 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
-                                    <div class="d-flex mb-3">
-                                        <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text-primary"></i></a>
-                                        <a class="btn btn-primary" href="">Ứng tuyển</a>
-                                    </div>
+                                    @foreach(var wish in Model.WishListVM)
+                                    {
+                                        if(jobpost.Id == wish.JobPostId && wish.Added == true)
+                                        {
+                                            <div class="d-flex mb-3">
+                                                <a class="btn btn-light btn-square me-3 wishlist-link added" data-job-post-id="@jobpost.Id" href=""><i class="far fa-heart text-primary"></i></a>
+                                                <a class="btn btn-primary" href="">Ứng tuyển</a>
+                                            </div>
+                                        }
+                                        else if(jobpost.Id == wish.JobPostId && wish.Added == false)
+                                        {
+                                            <div class="d-flex mb-3">
+                                                <a class="btn btn-light btn-square me-3 wishlist-link" data-job-post-id="@jobpost.Id" href=""><i class="far fa-heart text-primary"></i></a>
+                                                <a class="btn btn-primary" href="">Ứng tuyển</a>
+                                            </div>
+                                        }
+                                    }
                                     <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Hạn nộp hồ sơ: @jobpost.EndDate</small>
                                 </div>
                             </div>
@@ -287,7 +301,7 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                                     <div class="d-flex mb-3">
-                                        <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text-primary"></i></a>
+                                        <a class="btn btn-light btn-square me-3 wishlist-link" data-job-post-id="@jobpost.Id" href=""><i class="far fa-heart text-primary"></i></a>
                                         <a class="btn btn-primary" href="">Ứng tuyển</a>
                                     </div>
                                     <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Hạn nộp hồ sơ: @jobpost.EndDate</small>

@@ -26,38 +26,45 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            CompanyVM CompanyVM = new()
+            CompanyVM companyVM = new CompanyVM();
+            List<int> tagIds = new List<int>();
+            if (id == null || id == 0)
             {
-                Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
+                companyVM = new CompanyVM();
+                companyVM.Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
-                }),
-                Company = new TuyenDungWeb.Models.Company()
-            };
-            if (id == null || id == 0)
-            {
-                //create
-                return View(CompanyVM);
+                });
+
             }
             else
             {
-                //update
-                CompanyVM.Company = _unitOfWork.Company.Get(u => u.Id == id, includeProperties: "CompanyImages");
-                return View(CompanyVM);
+                var company = _unitOfWork.Company.FirstOrDefault(id);
+                var companyImages = _unitOfWork.CompanyImage.GetCompanyImagesForCompany(id);
+                company.Tags.ToList().ForEach(t => tagIds.Add(t.Id));
+                companyVM.Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+                companyVM.Company = company;
+                companyVM.Company.CompanyImages = companyImages;
+                companyVM.tagIds = tagIds.ToArray();
+
             }
+            return View(companyVM);
 
         }
         [HttpPost]
-        public IActionResult Upsert(CompanyVM CompanyVM, List<IFormFile> files)
+        public IActionResult Upsert(CompanyVM CompanyVM, List<IFormFile> files, string tagNames)
         {
-            // Map Tags from selected tags
+            //split tagNames into array of tag names and add to database
+            var tagNamesArray = tagNames.Split(", ");
             var selectedTags = new List<Tag>();
-            foreach (var selectedTagItem in CompanyVM.SelectedTags)
+            foreach (var tagName in tagNamesArray)
             {
-                var selectedTagId = int.Parse(selectedTagItem);
-                var existingTag = _unitOfWork.Tag.GetById(selectedTagId);
-
+                var existingTag = _unitOfWork.Tag.GetFirstOrDefaultTagName(tagName);
                 if (existingTag != null)
                 {
                     selectedTags.Add(existingTag);
@@ -67,10 +74,12 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             if (CompanyVM.Company.Id == 0)
             {
                 _unitOfWork.Company.Add(CompanyVM.Company);
+                TempData["success"] = "Thêm thành công!";
             }
             else
             {
                 _unitOfWork.Company.Update(CompanyVM.Company);
+                TempData["success"] = "Cập nhật thành công!";
             }
 
             _unitOfWork.Save();
@@ -112,7 +121,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             }
 
 
-            TempData["success"] = "Thêm/ sửa thành công!";
+
             return RedirectToAction("Index");
         }
 
@@ -159,7 +168,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             var companyToBeDeleted = _unitOfWork.Company.Get(u => u.Id == id);
             if (companyToBeDeleted == null)
             {
-                return Json(new { success = false, message = "Error while deleting" });
+                return Json(new { success = false, message = "Lỗi trong khi xóa" });
             }
 
             string CompanyPath = @"images\Companys\Company-" + id;

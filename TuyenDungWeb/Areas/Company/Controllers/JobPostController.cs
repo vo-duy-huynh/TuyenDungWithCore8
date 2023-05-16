@@ -57,11 +57,8 @@ namespace TuyenDungWeb.Areas.Company.Controllers
         public IActionResult Upsert(JobPostVM JobPostVM, string CompanyId)
         {
             JobType existingJobType = new JobType();
-            foreach (var selectedJobTypeItem in JobPostVM.SelectedJobTypes)
-            {
-                var selectedJobTypeId = int.Parse(selectedJobTypeItem);
-                existingJobType = _unitOfWork.JobType.GetById(selectedJobTypeId);
-            }
+            //int jobTypeId = int.Parse(JobPostVM.SelectedJobTypes[0].ToString());
+            //existingJobType = _unitOfWork.JobType.GetById(jobTypeId);
             JobPostVM.JobPostTemp.JobTypeId = existingJobType.Id;
             JobPostVM.JobPostTemp.JobId = 1;
 
@@ -72,10 +69,7 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             JobPostVM.JobPostTemp.Message = message;
             if (CompanyId == null)
             {
-                foreach (var selectedCompanyItem in JobPostVM.SelectedCompanies)
-                {
-                    JobPostVM.JobPostTemp.CompanyId = int.Parse(selectedCompanyItem);
-                }
+                JobPostVM.JobPostTemp.CompanyId = int.Parse(JobPostVM.SelectedCompany);
             }
             if (CompanyId != null)
             {

@@ -69,14 +69,8 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             JobPostVM.JobPost.Visible = true;
             JobPostVM.JobPost.UrlHandle = UrlHandle;
             JobPostVM.JobPostTemp.IsApprove = true;
-            var existingJob = new Job();
-            foreach (var selectedJobItem in JobPostVM.SelectedJobs)
-            {
-                var selectedJobId = int.Parse(selectedJobItem);
-                existingJob = _unitOfWork.Job.GetById(selectedJobId);
-            }
-            JobPostVM.JobPost.JobId = existingJob.Id;
-            JobPostVM.JobPostTemp.JobId = 1;
+            JobPostVM.JobPost.JobId = int.Parse(JobPostVM.SelectedJob);
+            JobPostVM.JobPostTemp.JobId = int.Parse(JobPostVM.SelectedJob);
             if (JobPostVM.JobPost.Id == 0)
             {
                 _unitOfWork.JobPost.Add(JobPostVM.JobPost);

@@ -54,17 +54,32 @@
                         </div>
 
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedJobs" asp-items="@Model.JobList" class="form-select border-0 shadow">
+                            <select asp-for="@Model.SelectedJob" asp-items="@Model.JobList" class="form-select border-0 shadow">
                             </select>
-                            <label asp-for="SelectedJobs" class="ms-2">Chọn việc làm</label>
-                            <span asp-validation-for="SelectedJobs" class="text-danger"></span>
+                            <label asp-for="SelectedJob" class="ms-2">Chọn việc làm</label>
+                            <span asp-validation-for="SelectedJob" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
                             <input asp-for="JobPostTemp.Experience" class="form-control border-0 shadow" />
                             <label asp-for="JobPostTemp.Experience" class="ms-2"></label>
                             <span asp-validation-for="JobPostTemp.Experience" class="text-danger"></span>
                         </div>
-
+                       @* <div class="form-floating py-2 col-12">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Visible">
+                                    <input type="checkbox" asp-for="JobPostTemp.Visible" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Visible)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Status">
+                                    <input asp-for="JobPostTemp.Status" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Status)
+                                </label>
+                            </div>
+                        </div>*@
                         <div class="form-floating py-2 col-12">
                             <input asp-for="JobPostTemp.Salary" class="form-control border-0 shadow" />
                             <label asp-for="JobPostTemp.Salary" class="ms-2"></label>

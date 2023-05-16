@@ -1,8 +1,8 @@
-﻿@page
+﻿@page "/confirm-email/"
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Xác nhận email";
+    ViewData["Title"] = "Xác thực email";
 }
 
-<h2>@ViewData["Title"]</h2>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<h1>@ViewData["Title"]</h1>
+<p>@Model.StatusMessage</p>

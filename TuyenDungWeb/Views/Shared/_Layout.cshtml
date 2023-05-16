@@ -21,6 +21,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/assets/dist/virtual-select.min.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
@@ -31,11 +32,16 @@
     
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/assets/css/bootstrap.min.css" rel="stylesheet">
+    
 
     <!-- Template Stylesheet -->
     <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/loading.css" rel="stylesheet">
+
     <!-- box icon -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+
 </head>
 
 <body>
@@ -83,7 +89,7 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Công ty</a>
                         <div class="dropdown-menu rounded-0 m-0">
-                            <a href="job-list.html" class="dropdown-item">Danh sách công ty</a>
+                            <a asp-area="Customer" asp-controller="Company" asp-action="Index" class="dropdown-item">Danh sách công ty</a>
                             <a href="job-detail.html" class="dropdown-item">Top công ty</a>
                         </div>
                     </div>
@@ -105,6 +111,10 @@
                             </div>
                         </div>
                         <span class="count-wishlist">0</span>
+                    </div>
+                    <div class="wish-list">
+                        <ul class="wish-ul">
+                        </ul>
                     </div>
                     <div class="nav-item notification">
                         <div class="notification-item__icon">
@@ -195,6 +205,34 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a> -->
     </div>
     <style>
+        .added{
+            background-color: red;
+        }
+
+        .wish-list {
+            position: absolute;
+            top: 100%;
+            right: 300px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+        }
+
+            .wish-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .wish-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid gray;
+            list-style-type: none;
+        }
         .notification-list {
             position: absolute;
             top: 100%;
@@ -217,6 +255,7 @@
             .notification-list li {
                 padding: 8px 0;
                 border-bottom: 1px solid gray;
+                list-style-type: none;
             }
 
         .pagination {
@@ -290,9 +329,12 @@
                         color: #fff;
                     }
 
+
     </style>
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@*    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/lib/wow/wow.min.js"></script>
     <script src="~/assets/lib/easing/easing.min.js"></script>
@@ -308,6 +350,197 @@
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Hide the wishlist container on page load
+            $('.wish-list').hide();
+
+            // Toggle the display of the wishlist container when clicking on the wishlist button
+            $('.wishlist').click(function () {
+                $('.wish-list').toggle();
+            });
+        });
+        </script>
+    <script>
+        //$('.wishlist-link').on('click', function (e) {
+        //    e.preventDefault();
+        //    var anchor = $(this); // Change 'button' to 'anchor'
+        //    var jobPostId = anchor.data('job-post-id');
+        //        $.ajax({
+        //            url: '/Company/Home/AddToWishlist',
+        //            type: 'POST',
+        //            data: { jobPostId: jobPostId },
+        //            success: function (response) {
+        //            $('.count-wishlist').text(response.wishlistCount);
+        //                Swal.fire({
+        //                    icon: 'success',
+        //                    title: response.message,
+        //                    showConfirmButton: false,
+        //                    timer: 1500
+        //                })
+        //                //.fa-heart change background
+        //                if (response.message === "Bạn đã bỏ yêu thích thành công.") {
+        //                    anchor.removeClass('added');
+        //                    $('.fa-heart', anchor).removeClass('filled');
+        //                }
+        //                else{
+        //                    anchor.addClass('added');
+        //                $('.fa-heart', anchor).addClass('filled');
+        //                }
+        //            },
+        //            error: function (xhr, status, error) {
+        //                if (xhr.responseJSON && xhr.responseJSON.message) {
+        //                    alert(xhr.responseJSON.message);
+        //                } else {
+        //                    alert('Đã xảy ra lỗi.');
+        //                }
+        //            }
+        //        });
+        //    });
+
+        $(document).ready(function () {
+            // Add job post to wishlist
+            $('.wishlist-link').on('click', function (e) {
+                e.preventDefault();
+                var anchor = $(this);
+                var jobPostId = $(this).data('job-post-id');
+
+                $.ajax({
+                    url: '/Company/Home/AddToWishlist',
+                    type: 'POST',
+                    data: {
+                        jobPostId: jobPostId
+                    },
+                    success: function (response) {
+                        // Update wishlist count
+                        $('.count-wishlist').text(response.wishlistCount);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        //.fa-heart change background
+                        if (response.message === "Bạn đã bỏ yêu thích thành công.") {
+                            anchor.removeClass('added');
+                            $('.fa-heart', anchor).removeClass('filled');
+                        }
+                        else{
+                            anchor.addClass('added');
+                        $('.fa-heart', anchor).addClass('filled');
+                        }
+
+                        // Update wishlist items
+                        updateWishlist(response.wishlistItems, response.message);
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert(xhr.responseJSON.message);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Chưa đăng nhập',
+                                text: 'Hãy đăng nhập để sử dụng chức năng này!',
+                                footer: '<a href="/Login">Đăng nhập ngay?</a>'
+                            })
+                            //chuyển về trang login
+                            ///*window.location.href = "/Account/Login";*/
+                        }
+                    }
+                });
+            });
+
+            // Delete wishlist item
+            $(document).on('click', '.wishlist-item__delete', function (e) {
+                e.preventDefault();
+
+                var wishlistItemId = $(this).data('wishlist-id');
+
+                $.ajax({
+                    url: '/Company/Home/DeleteWishlistItem',
+                    type: 'POST',
+                    data: {
+                        wishlistItemId: wishlistItemId
+                    },
+                    success: function (response) {
+                        // Update wishlist count
+                        $('.count-wishlist').text(response.wishlistCount);
+                        // Update wishlist items
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        updateWishlist(response.wishlistItems, response.message);
+
+                    },
+                    error: function (xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+            // Update wishlist items
+            function updateWishlist(wishlistItems, status) {
+                
+                if(status === "Bạn đã yêu thích thành công.")
+                {
+                    var wishlistContainer = $('<ul class="wish-list"></ul>');
+                    var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + wishlistItems.id + '" > </li>');
+                    var titleElement = $('<div class="wishlist-item__title"></div>');
+                    var linkElement = $('<a href="/JobPosts/Details/' + wishlistItems.id + '">' + wishlistItems.heading + '</a>');
+                    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + wishlistItems.id + '">Delete</button>');
+                    titleElement.append(linkElement);
+                    itemElement.append(titleElement);
+                    itemElement.append(deleteElement);
+                    wishlistContainer.append(itemElement);
+                }
+                else if(status === "Bạn đã bỏ yêu thích thành công.")
+                {
+                    //remove
+                    $('.wishlist-item[data-wishlist-id="' + wishlistItems.id + '"]').remove();
+                }
+
+
+                //wishlistContainer.empty();
+
+                //$.each(wishlistItems, function (index, item) {
+                //    var itemElement = $('<li class="wishlist-item"></li>');
+                //    var titleElement = $('<div class="wishlist-item__title"></div>');
+                //    var linkElement = $('<a href="/JobPosts/Details/' + item.jobPost.id + '">' + item.jobPost.heading + '</a>');
+                //    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + item.jobPost.id + '">Delete</button>');
+
+                //    titleElement.append(linkElement);
+                //    itemElement.append(titleElement);
+                //    itemElement.append(deleteElement);
+                //    wishlistContainer.append(itemElement);
+                //});
+            }
+        });
+    </script>
+    <script>
+        $.get('/Company/Home/GetWishlistItems', function (data) {
+            var wishlistContainer = $('<ul class="wish-list"></ul>');
+            $.each(data, function (index, item) {
+                var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + item.jobPost.id + '"></li>');
+                var titleElement = $('<div class="wishlist-item__title"></div>');
+                var linkElement = $('<a href="/JobPosts/Details/' + item.jobPost.id + '">' + item.jobPost.heading + '</a>');
+                var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + item.jobPost.id + '">Delete</button>');
+
+                titleElement.append(linkElement);
+                itemElement.append(titleElement);
+                itemElement.append(deleteElement);
+                wishlistContainer.append(itemElement);
+            });
+
+            $('.count-wishlist').text(data.length);
+            $('.wish-list').replaceWith(wishlistContainer);
+            var countElement = $('.count-wishlist');
+            countElement.text(data.length);
+        });
+        </script>
     <script src="~/js/notification.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -158,8 +158,6 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 user.FullName = Input.FullName;
                 user.Address = Input.Address;
                 user.City = Input.City;
-                user.State = Input.State;
-                user.PostalCode = Input.PostalCode;
                 user.PhoneNumber = Input.PhoneNumber;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
