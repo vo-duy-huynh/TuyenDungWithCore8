@@ -1,7 +1,10 @@
-﻿@using TuyenDungWeb.Utility;
+﻿@using Microsoft.AspNetCore.Identity;
+@using TuyenDungWeb.Utility;
 <!DOCTYPE html>
 <html lang="en">
 @inject IHttpContextAccessor HttpContextAccessor
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 <head>
     <meta charset="utf-8">
     <title>@ViewData["Title"] - TuyenDungWeb</title>
@@ -18,10 +21,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="~/assets/css/formselect.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link href="~/assets/css/boostrap-select.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/assets/dist/virtual-select.min.css" />
+<!--    <link rel="stylesheet" href="https: //cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" /> -->
+
+    
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
@@ -36,7 +44,9 @@
 
     <!-- Template Stylesheet -->
     <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/loginregister.css" rel="stylesheet">
     <link href="~/assets/css/loading.css" rel="stylesheet">
+    <link href="~/assets/css/listcv.css" rel="stylesheet">
 
     <!-- box icon -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -75,14 +85,15 @@
                                 <a asp-area="Admin" asp-controller="JobPostTemp" asp-action="Index" class="dropdown-item">Chờ chấp nhận</a>
                                 <a asp-area="Admin" asp-controller="Company" asp-action="Index" class="dropdown-item">Công ty</a>
                                 <a asp-area="Admin" asp-controller="JobPost" asp-action="Index" class="dropdown-item">Bài Viết</a>
-                                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
+                                <a asp-area="Admin" asp-controller="User" asp-action="Index" class="dropdown-item">Người dùng</a>
+                                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Tạo người dùng</a>
                             </div>
                         </div>
                     }
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Hồ sơ & CV</a>
                         <div class="dropdown-menu rounded-0 m-0">
-                            <a href="job-list.html" class="dropdown-item">Mẫu CV</a>
+                            <a asp-area="Customer" asp-controller="CV" asp-action="Index" class="dropdown-item">Mẫu CV</a>
                             <a href="job-detail.html" class="dropdown-item">Một số cách viết CV</a>
                         </div>
                     </div>
@@ -90,7 +101,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Công ty</a>
                         <div class="dropdown-menu rounded-0 m-0">
                             <a asp-area="Customer" asp-controller="Company" asp-action="Index" class="dropdown-item">Danh sách công ty</a>
-                            <a href="job-detail.html" class="dropdown-item">Top công ty</a>
+                            <a asp-area="Customer" asp-controller="Company" asp-action="TopCompany" class="dropdown-item">Top công ty</a>
                         </div>
                     </div>
                     @if (User.IsInRole(SD.Role_Company))
@@ -112,10 +123,12 @@
                         </div>
                         <span class="count-wishlist">0</span>
                     </div>
-                    <div class="wish-list">
-                        <ul class="wish-ul">
+                    <div id="wish-list-father" class="wish-list-father">
+                        <ul class="wish-list">
+                            
                         </ul>
                     </div>
+
                     <div class="nav-item notification">
                         <div class="notification-item__icon">
                             <div class="notification-icon">
@@ -129,12 +142,41 @@
                         </ul>
                     </div>
 
+                    <div class="nav-item notification2">
+                        <div class="notification2-item__icon">
+                            <div class="notification2-icon">
+                                <span class=""><i class=" fa fa-bell"></i></span>
+                            </div>
+                        </div>
+                        <span class="count-notification2" id="count-notification2">0</span>
+                    </div>
+                    <div class="notification-list2">
+                        <ul class="notification-ul2">
+                        </ul>
+                    </div>
+                    <div class="nav-item message-chat">
+                        <div class="message-chat-item__icon">
+                            <div class="message-chat-icon">
+                                <span class=""><i class="fab fa-facebook-messenger"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-chatMessages">
+                        <h3>Trò Chuyện</h3>
+                        <textarea placeholder="Nhập nội dung" id="messageInput" name="messageInput" required></textarea>
+                        <input type="button" id="sendButton" value="Gửi" />
+                        <input type="hidden" id="userInput" value="@UserManager.GetUserId(User)" />
+                        <hr />
+                        <ul id="chatMessages" class="chatMessages">
+                        </ul>
+                    </div>
+                   
                 </div>
-
                 <partial name="_LoginPartial" />
             </div>
         </nav>
         <!-- Navbar End -->
+        
         <partial name="_Notification" />
         @RenderBody()
         <!-- Footer Start -->
@@ -142,39 +184,39 @@
             <div class="container py-5">
                 <div class="row g-5">
                     <div class="col-lg-3 col-md-6">
-                        <h5 class="text-white mb-4">Company</h5>
-                        <a class="btn btn-link text-white-50" href="">About Us</a>
-                        <a class="btn btn-link text-white-50" href="">Contact Us</a>
-                        <a class="btn btn-link text-white-50" href="">Our Services</a>
-                        <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
-                        <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
+                        <h5 class="text-white mb-4">Công ty</h5>
+                        <a class="btn btn-link text-white-50" href="#">FPT</a>
+                        <a class="btn btn-link text-white-50" href="#">Intel</a>
+                        <a class="btn btn-link text-white-50" href="#">Viettel</a>
+                        <a class="btn btn-link text-white-50" href="#">Vietcombank</a>
+                        <a class="btn btn-link text-white-50" href="#">KMS Technology</a>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <h5 class="text-white mb-4">Quick Links</h5>
-                        <a class="btn btn-link text-white-50" href="">About Us</a>
-                        <a class="btn btn-link text-white-50" href="">Contact Us</a>
-                        <a class="btn btn-link text-white-50" href="">Our Services</a>
-                        <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
-                        <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
+                        <h5 class="text-white mb-4">Một số liên kết</h5>
+                        <a class="btn btn-link text-white-50" href="/login">Đăng nhập</a>
+                        <a class="btn btn-link text-white-50" href="/Identity/Account/Register?returnUrl=%2F">Đăng ký</a>
+                        <a class="btn btn-link text-white-50" href="/Customer/Company">Tất cả công ty</a>
+                        <a class="btn btn-link text-white-50" href="/Customer/CV">Mẫu CV</a>
+                        <a class="btn btn-link text-white-50" href="/Customer/Home">Trang chủ</a>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <h5 class="text-white mb-4">Contact</h5>
-                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Location, City, Country</p>
-                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <h5 class="text-white mb-4">Liên hệ</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>KTX khu B, Thủ Đức</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+033 9968 544</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>huynh13nd@gmail.com</p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://twitter.com/hutechvietnam"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://www.facebook.com/17voduy.huynh172/"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://www.youtube.com/channel/UC2B2dBto8mbEozmYil5UP-g"><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://www.linkedin.com/company/hutech-dai-hoc-cong-nghe-tphcm"><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <h5 class="text-white mb-4">Newsletter</h5>
-                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <h5 class="text-white mb-4">Hỗ trợ</h5>
+                        <p>Mọi góp ý để hoàn thiện xin vui lòng gửi tại đây.</p>
                         <div class="position-relative mx-auto" style="max-width: 400px;">
-                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text" placeholder="Địa chỉ email">
+                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Gửi</button>
                         </div>
                     </div>
                 </div>
@@ -183,36 +225,35 @@
                 <div class="copyright">
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="https://freewebsitecode.com">Your Site Name</a>, All Right Reserved.
-
-
-                            Designed By <a class="border-bottom" href="https://freewebsitecode.com">Free Website Code</a>
+                            &copy; <a class="border-bottom" href="#">HJob</a>, 
                         </div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">
-                                <a href="">Home</a>
-                                <a href="">Cookies</a>
-                                <a href="">Help</a>
-                                <a href="">FQAs</a>
+                                <a href="~/Customer/Home/Index">Trang chủ</a>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <!-- Footer End -->
-        <!-- Back to Top
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a> -->
+        <!-- Back to Top-->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a> 
     </div>
     <style>
         .added{
             background-color: red;
         }
 
+        .added i{
+            color: #fff;
+        }
         .wish-list {
             position: absolute;
             top: 100%;
-            right: 300px;
+            right: 150px;
             z-index: 1;
             background-color: white;
             border: 1px solid gray;
@@ -220,6 +261,8 @@
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
             padding: 8px;
             display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
         }
 
             .wish-list ul {
@@ -233,10 +276,94 @@
             border-bottom: 1px solid gray;
             list-style-type: none;
         }
-        .notification-list {
+
+        .notification2{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            display: flex;
+            cursor: pointer;
+        }
+
+        .message-chat {
+            color: white;
+            position: fixed;
+            bottom: 20px;
+            right: 11px;
+            width: 50px;
+            height: 50px;
+            background-color: #2b9bff;
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            display: flex;
+            cursor: pointer;
+        }
+        .job-item1 {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+            .job-item1:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .job-item1 .job-title {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .job-item1 .job-description {
+                font-size: 14px;
+                color: #777;
+                margin-bottom: 10px;
+            }
+
+            .job-item1 .btn {
+                padding: 8px 16px;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+
+                .job-item1 .btn:hover {
+                    background-color: rgb(80, 163, 136);
+                    color: bisque;
+                    /* size more bigger */
+                    transform: scale(1.1);
+                }
+        .count-notification2{
             position: absolute;
-            top: 100%;
-            right: 300px;
+            top: -8px;
+            right: -8px;
+            width: 18px;
+            height: 18px;
+            background-color: red;
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .notification-list2 {
+            position: fixed;
+            bottom: 80px;
+            left: 0px;
             z-index: 1;
             background-color: white;
             border: 1px solid gray;
@@ -244,8 +371,62 @@
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
             padding: 8px;
             display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
         }
 
+            .notification-list2 ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .notification-list2 li {
+                padding: 8px 0;
+                border-bottom: 1px solid gray;
+                list-style-type: none;
+            }
+
+        .message-chatMessages {
+            position: fixed;
+            bottom: 80px;
+            right: 0px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+            .message-chatMessages ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .message-chatMessages li {
+                padding: 8px 0;
+                border-bottom: 1px solid gray;
+                list-style-type: none;
+            }
+        .notification-list {
+            position: absolute;
+            top: 100%;
+            right: 0px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
             .notification-list ul {
                 list-style: none;
                 padding: 0;
@@ -329,6 +510,73 @@
                         color: #fff;
                     }
 
+        .open-button {
+            background-color: #555;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 23px;
+            right: 28px;
+            width: 280px;
+        }
+
+        /* The popup form - hidden by default */
+        .form-popup {
+            display: none;
+            position: fixed;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #f1f1f1;
+            z-index: 9;
+        }
+
+        /* Add styles to the form container */
+        .form-container {
+            max-width: 300px;
+            padding: 10px;
+            background-color: white;
+        }
+
+            /* Full-width input fields */
+            .form-container input[type=text], .form-container input[type=password] {
+                width: 100%;
+                padding: 15px;
+                margin: 5px 0 22px 0;
+                border: none;
+                background: #f1f1f1;
+            }
+
+                /* When the inputs get focus, do something */
+                .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+                    background-color: #ddd;
+                    outline: none;
+                }
+
+            /* Set a style for the submit/login button */
+            .form-container .btn {
+                color: white;
+                padding: 16px 20px;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                margin-bottom: 10px;
+                opacity: 0.8;
+            }
+
+            /* Add a red background color to the cancel button */
+            .form-container .cancel {
+                background-color: red;
+            }
+
+            /* Add some hover effects to buttons */
+            .form-container .btn:hover, .open-button:hover {
+                opacity: 1;
+            }
+
+
 
     </style>
     <!-- JavaScript Libraries -->
@@ -340,7 +588,7 @@
     <script src="~/assets/lib/easing/easing.min.js"></script>
     <script src="~/assets/lib/waypoints/waypoints.min.js"></script>
     <script src="~/assets/lib/owlcarousel/owl.carousel.min.js"></script>
-
+    <script src="https://cdn.syncfusion.com/ej2/21.1.35/dist/ej2.min.js"></script>
     <!-- Template Javascript -->
     <script src="~/assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -350,6 +598,7 @@
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+
     <script>
         $(document).ready(function () {
             // Hide the wishlist container on page load
@@ -360,44 +609,50 @@
                 $('.wish-list').toggle();
             });
         });
+        $('.notification-list2').hide();
+
+        // Toggle the display of the notification-list2 when clicking on the notification2 element
+        $('.notification2').click(function () {
+            toggleNotificationList2();
+        });
+        function toggleNotificationList2() {
+            var notificationList2 = document.querySelector('.notification-list2');
+            notificationList2.style.display = notificationList2.style.display === 'none' ? 'block' : 'none';
+        }
+        $('.message-chatMessages').hide();
+
+        // Toggle the display of the notification-list2 when clicking on the notification2 element
+        $('.message-chat').click(function () {
+            togglechatMessages();
+        });
+        function togglechatMessages() {
+            var chatMessages = document.querySelector('.message-chatMessages');
+            chatMessages.style.display = chatMessages.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+   
+    <script>
+        $.get('/Company/Home/GetWishlistItems', function (data) {
+            var wishlistContainer = $('<ul class="wish-list"></ul>');
+            $.each(data, function (index, item) {
+                var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + item.jobPost.id + '"></li>');
+                var titleElement = $('<div class="wishlist-item__title"></div>');
+                var linkElement = $('<a href="/Vieclam/' + item.jobPost.urlHandle + '">' + item.jobPost.heading + '</a>');
+                var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + item.jobPost.id + '">Delete</button>');
+
+                titleElement.append(linkElement);
+                itemElement.append(titleElement);
+                itemElement.append(deleteElement);
+                wishlistContainer.append(itemElement);
+            });
+
+            $('.count-wishlist').text(data.length);
+            $('.wish-list').replaceWith(wishlistContainer);
+            var countElement = $('.count-wishlist');
+            countElement.text(data.length);
+        });
         </script>
     <script>
-        //$('.wishlist-link').on('click', function (e) {
-        //    e.preventDefault();
-        //    var anchor = $(this); // Change 'button' to 'anchor'
-        //    var jobPostId = anchor.data('job-post-id');
-        //        $.ajax({
-        //            url: '/Company/Home/AddToWishlist',
-        //            type: 'POST',
-        //            data: { jobPostId: jobPostId },
-        //            success: function (response) {
-        //            $('.count-wishlist').text(response.wishlistCount);
-        //                Swal.fire({
-        //                    icon: 'success',
-        //                    title: response.message,
-        //                    showConfirmButton: false,
-        //                    timer: 1500
-        //                })
-        //                //.fa-heart change background
-        //                if (response.message === "Bạn đã bỏ yêu thích thành công.") {
-        //                    anchor.removeClass('added');
-        //                    $('.fa-heart', anchor).removeClass('filled');
-        //                }
-        //                else{
-        //                    anchor.addClass('added');
-        //                $('.fa-heart', anchor).addClass('filled');
-        //                }
-        //            },
-        //            error: function (xhr, status, error) {
-        //                if (xhr.responseJSON && xhr.responseJSON.message) {
-        //                    alert(xhr.responseJSON.message);
-        //                } else {
-        //                    alert('Đã xảy ra lỗi.');
-        //                }
-        //            }
-        //        });
-        //    });
-
         $(document).ready(function () {
             // Add job post to wishlist
             $('.wishlist-link').on('click', function (e) {
@@ -420,19 +675,18 @@
                             title: response.message,
                             showConfirmButton: false,
                             timer: 1500
-                        })
-                        //.fa-heart change background
+                        });
+
                         if (response.message === "Bạn đã bỏ yêu thích thành công.") {
                             anchor.removeClass('added');
                             $('.fa-heart', anchor).removeClass('filled');
-                        }
-                        else{
+                        } else {
                             anchor.addClass('added');
-                        $('.fa-heart', anchor).addClass('filled');
+                            $('.fa-heart', anchor).addClass('filled');
                         }
 
                         // Update wishlist items
-                        updateWishlist(response.wishlistItems, response.message);
+                        updateWishlist(response.wishlistItems, response.message, response.jobPost);
                     },
                     error: function (xhr, status, error) {
                         if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -443,9 +697,7 @@
                                 title: 'Chưa đăng nhập',
                                 text: 'Hãy đăng nhập để sử dụng chức năng này!',
                                 footer: '<a href="/Login">Đăng nhập ngay?</a>'
-                            })
-                            //chuyển về trang login
-                            ///*window.location.href = "/Account/Login";*/
+                            });
                         }
                     }
                 });
@@ -454,7 +706,6 @@
             // Delete wishlist item
             $(document).on('click', '.wishlist-item__delete', function (e) {
                 e.preventDefault();
-
                 var wishlistItemId = $(this).data('wishlist-id');
 
                 $.ajax({
@@ -466,15 +717,22 @@
                     success: function (response) {
                         // Update wishlist count
                         $('.count-wishlist').text(response.wishlistCount);
-                        // Update wishlist items
                         Swal.fire({
                             icon: 'success',
                             title: response.message,
                             showConfirmButton: false,
                             timer: 1500
-                        })
-                        updateWishlist(response.wishlistItems, response.message);
-
+                        });
+                        var anchor = $('.wishlist-link[data-job-post-id="' + wishlistItemId + '"]');
+                        if (response.message === "Bạn đã bỏ yêu thích thành công.") {
+                            anchor.removeClass('added');
+                            $('.fa-heart', anchor).removeClass('filled');
+                        } else {
+                            anchor.addClass('added');
+                            $('.fa-heart', anchor).addClass('filled');
+                        }
+                        // Update wishlist items
+                        updateWishlist(response.wishlistItems, response.message, response.jobPost);
                     },
                     error: function (xhr) {
                         console.log(xhr.responseText);
@@ -483,152 +741,199 @@
             });
 
             // Update wishlist items
-            function updateWishlist(wishlistItems, status) {
-                
-                if(status === "Bạn đã yêu thích thành công.")
-                {
-                    var wishlistContainer = $('<ul class="wish-list"></ul>');
-                    var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + wishlistItems.id + '" > </li>');
+            function updateWishlist(wishlistItems, status, jobPost) {
+                if (status === "Bạn đã yêu thích thành công.") {
+                    var wishlistContainer = $('<li class="wishlist-item"></li>');
+                    wishlistContainer.attr('data-wishlist-id', wishlistItems.jobPostId);
+
                     var titleElement = $('<div class="wishlist-item__title"></div>');
-                    var linkElement = $('<a href="/JobPosts/Details/' + wishlistItems.id + '">' + wishlistItems.heading + '</a>');
-                    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + wishlistItems.id + '">Delete</button>');
+
+                    var linkElement = $('<a></a>');
+                    linkElement.attr('href', '/ViecLam/' + wishlistItems.urlHandle);
+                    linkElement.text(jobPost.heading);
+
+                    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete">Delete</button>');
+                    deleteElement.attr('data-wishlist-id', wishlistItems.jobPostId);
+
+                    titleElement.append(linkElement);
+                    wishlistContainer.append(titleElement);
+                    wishlistContainer.append(deleteElement);
+
+                    var parentElement = $('#wish-list-father .wish-list');
+                    console.log(parentElement);
+                    console.log(parentElement.length);
+                    if (parentElement.length > 0) {
+                        parentElement.append(wishlistContainer);
+                    } else {
+                        console.error("Parent element not found!");
+                    }
+                } else if (status === "Bạn đã bỏ yêu thích thành công.") {
+                    var wishlistItemId = wishlistItems.jobPostId;
+                    $('.wishlist-item[data-wishlist-id="' + wishlistItemId + '"]').remove();
+                }
+            }
+        });
+    </script>
+    @if (User.IsInRole(SD.Role_Admin))
+    {
+        <script>
+            $.get('/Company/Home/GetNotificationItems', function (data) {
+            var wishlistContainer = $('<ul class="notification-ul"></ul>');
+            $.each(data, function (index, item) {
+                var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                var titleElement = $('<div class="notificationlist-item__title"></div>');
+                var linkElement = $('<a href="/Admin/jobposttemp/Upsert/' + item.id + '">' + item.message + '</a>');
+
+                titleElement.append(linkElement);
+                itemElement.append(titleElement);
+                wishlistContainer.append(itemElement);
+            });
+
+            $('.count-notification').text(data.length);
+            $('.notification-ul').replaceWith(wishlistContainer);
+            var countElement = $('.count-notification');
+            countElement.text(data.length);
+        });
+        </script>
+    }
+    @if (!User.IsInRole(SD.Role_Admin))
+    {
+        <script>
+            $(document).ready(function () {
+                
+                function loadNotifications() {
+                    $.get('/Company/Home/GetNotificationItems', function (data) {
+                        var wishlistContainer = $('<ul class="notification-ul"></ul>');
+                        $.each(data, function (index, item) {
+                            var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                            var titleElement = $('<div class="notificationlist-item__title"></div>');
+                            var linkElement = $('<a href="/Company/Jobpost/Detail/' + item.id + '">' + item.message + '</a>');
+                         
+
+                            titleElement.append(linkElement);
+                            itemElement.append(titleElement);
+                            wishlistContainer.append(itemElement);
+                        });
+
+                        $('.count-notification').text(data.length);
+                        $('.notification-ul').replaceWith(wishlistContainer);
+                        var countElement = $('.count-notification');
+                        countElement.text(data.length);
+                    });
+
+                    
+                }
+                function loadNotificationAplly(){
+                    $.get('/Company/Home/GetNotificationItemsForCompanyAfterApply', function (data) {
+                        var wishlistContainer = $('<ul class="notification-ul2"></ul>');
+                        $.each(data, function (index, item) {
+                            var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                            var titleElement = $('<div class="notificationlist-item__title"></div>');
+                            var linkElement = $('<a href="/Company/ProfileUserApply/Update?id=' + item.id + '">' + item.name + ' ' + " đã ứng tuyển vào " + ' ' + item.jobTitle + '</a>');
+                            titleElement.append(linkElement);
+                            itemElement.append(titleElement);
+                            wishlistContainer.append(itemElement);
+                        });
+
+                        $('.count-notification2').text(data.length);
+                        $('.notification-ul2').append(wishlistContainer);
+                        var countElement = $('.count-notification2');
+                        countElement.text(data.length);
+                    });
+                }
+                loadNotifications();
+                loadNotificationAplly();
+
+                // Refresh notifications on a specific event or interval
+                // Example: Refresh notifications every 5 minutes
+                setInterval(function () {
+                    loadNotifications();
+                }, 5 * 60 * 1000); // 5 minutes
+            });
+        </script>
+    }
+
+    @*@if (User.IsInRole(SD.Role_Company))
+    {
+        <script>
+            $(document).ready(function () {
+                loadNotifications();
+                loadNotifications1();
+            });
+
+            function loadNotifications() {
+            $.get('/Company/Home/GetNotificationItems', function (data) {
+                var wishlistContainer = $('<ul class="notification-ul"></ul>');
+                $.each(data, function (index, item) {
+                    var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                    var titleElement = $('<div class="notificationlist-item__title"></div>');
+                    var linkElement = $('<a href="/Company/Jobpost/Detail/' + item.id + '">' + item.message + '</a>');
+                    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-notificationlist-id="' + item.id + '">Delete</button>');
+
                     titleElement.append(linkElement);
                     itemElement.append(titleElement);
                     itemElement.append(deleteElement);
                     wishlistContainer.append(itemElement);
-                }
-                else if(status === "Bạn đã bỏ yêu thích thành công.")
-                {
-                    //remove
-                    $('.wishlist-item[data-wishlist-id="' + wishlistItems.id + '"]').remove();
-                }
+                });
 
+                $('.count-notification').text(data.length);
+                $('.notification-ul').replaceWith(wishlistContainer);
+                var countElement = $('.count-notification');
+                countElement.text(data.length);
+            });
+            function loadNotifications1(){
+                    $.get('/Company/Home/GetNotificationItemsForCompanyAfterApply', function (data1) {
+                        var wishlistContainer = $('<ul class="notification-ul"></ul>');
+                        $.each(data1, function (index, item) {
+                            var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                            var titleElement = $('<div class="notificationlist-item__title"></div>');
+                            var linkElement = $('<a href="/Company/Profile/Apply/' + item.id + '">' + item.name + ' ' + " đã ứng tuyển vào " + ' ' + item.jobTitle + '</a>');
+                            var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-notificationlist-id="' + item.id + '">Delete</button>');
 
-                //wishlistContainer.empty();
+                            titleElement.append(linkElement);
+                            itemElement.append(titleElement);
+                            itemElement.append(deleteElement);
+                            wishlistContainer.append(itemElement);
+                        });
 
-                //$.each(wishlistItems, function (index, item) {
-                //    var itemElement = $('<li class="wishlist-item"></li>');
-                //    var titleElement = $('<div class="wishlist-item__title"></div>');
-                //    var linkElement = $('<a href="/JobPosts/Details/' + item.jobPost.id + '">' + item.jobPost.heading + '</a>');
-                //    var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + item.jobPost.id + '">Delete</button>');
-
-                //    titleElement.append(linkElement);
-                //    itemElement.append(titleElement);
-                //    itemElement.append(deleteElement);
-                //    wishlistContainer.append(itemElement);
-                //});
+                        $('.count-notification').text(data.length);
+                        $('.notification-ul').append(wishlistContainer);
+                        var countElement = $('.count-notification');
+                        countElement.text(parseInt(countElement.text()) + data.length);
+                    });
             }
+        </script>
+       
+    }*@
+    <script src="~/js/notification.js" asp-append-version="true"></script>
+    <script src="~/assets/js/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@5.0.11/dist/browser/signalr.min.js"></script>
+
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/adminNotificationsHub").build();
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var encodedUser = $("<div />").text(user).html();
+            var encodedMessage = $("<div />").text(message).html();
+            var listItem = $("<li />").html("<strong>" + encodedUser + "</strong>: " + encodedMessage);
+            $("#chatMessages").append(listItem);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        $("#sendButton").click(function () {
+            var user = $("#userInput").val();
+            var message = $("#messageInput").val();
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            $("#messageInput").val("");
         });
     </script>
-    <script>
-        $.get('/Company/Home/GetWishlistItems', function (data) {
-            var wishlistContainer = $('<ul class="wish-list"></ul>');
-            $.each(data, function (index, item) {
-                var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + item.jobPost.id + '"></li>');
-                var titleElement = $('<div class="wishlist-item__title"></div>');
-                var linkElement = $('<a href="/JobPosts/Details/' + item.jobPost.id + '">' + item.jobPost.heading + '</a>');
-                var deleteElement = $('<button class="btn btn-danger btn-sm wishlist-item__delete" data-wishlist-id="' + item.jobPost.id + '">Delete</button>');
-
-                titleElement.append(linkElement);
-                itemElement.append(titleElement);
-                itemElement.append(deleteElement);
-                wishlistContainer.append(itemElement);
-            });
-
-            $('.count-wishlist').text(data.length);
-            $('.wish-list').replaceWith(wishlistContainer);
-            var countElement = $('.count-wishlist');
-            countElement.text(data.length);
-        });
-        </script>
-    <script src="~/js/notification.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>
-@*
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TuyenDungWeb</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/TuyenDungWeb.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TuyenDungWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Quản Trị
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Job" asp-action="Index">Việc Làm</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tag</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Manage User</a>
-                                    </li>
-
-                                </ul>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3" >
-            <partial name="_Notification" />
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer bg-primary text-muted ">
-        <div class="text-center">
-            HUYNHPRO! <i class="bi bi-heart-fill"></i>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" asp-append-version="true"></script>
-
-    <script src="https://cdn.tiny.cloud/1/g28lhnxtlihu4l4a381gw7tz47voznshwbi10lmsvlekrfme/tinymce/6/tinymce.min.js" referrerpolicy="origin">
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>*@

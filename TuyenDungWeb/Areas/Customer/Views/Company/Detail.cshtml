@@ -4,12 +4,11 @@
 <!-- Header End -->
 <div class="container-xxl py-5 bg-dark page-header mb-5">
     <div class="container my-5 pt-5 pb-4">
-        <h1 class="display-3 text-white mb-3 animated slideInDown">Job Detail</h1>
+        <h1 class="display-3 text-white mb-3 animated slideInDown">Chi tiết công ty</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb text-uppercase">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item text-white active" aria-current="page">Job Detail</li>
+                <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">Chi tiết công ty</li>
             </ol>
         </nav>
     </div>
@@ -18,7 +17,14 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="d-flex align-items-center mb-5">
-            <img class="flex-shrink-0 img-fluid border rounded" src="@Model.CompanyImages[0].ImageUrl" alt="" style="width: 80px; height: 80px;">
+            @foreach (var companyImage in Model.CompanyImages)
+            {
+                if (Model.Company.Id == companyImage.CompanyId)
+                {
+                    <img class="flex-shrink-0 img-fluid border rounded" src="@companyImage.ImageUrl" alt="" style="width: 80px; height: 80px;">
+                    break;
+                }
+            }
             <div class="text-start ps-4">
                 <h3 class="mb-3">@Model.Company.Name</h3>
                 <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>@Model.Company.Location</span>
@@ -172,12 +178,15 @@
                                     }
 
                                     <div class="text-start ps-4">
-                                        <h5 class="mb-3">@jobpost.Heading
-                                        @if (jobpost.CreatedDate > DateTime.Now.AddDays(-3))
-                                        {
-                                            <span class="badge bg-danger mb-3">New</span>
-                                        }
-                                        </h5>
+                                        <a href="/Customer/Home/Detail?id=@jobpost.Id">
+                                            <h5 class="mb-3">
+                                                @jobpost.Heading
+                                                @if (jobpost.CreatedDate > DateTime.Now.AddDays(-3))
+                                                {
+                                                    <span class="badge bg-danger mb-3">New</span>
+                                                }
+                                            </h5>
+                                        </a>
                                         @foreach (var company in Model.Companies)
                                         {
                                             if (jobpost.CompanyId == company.Id)

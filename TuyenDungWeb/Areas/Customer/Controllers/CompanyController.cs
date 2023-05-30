@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
@@ -45,7 +46,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
         }
         public IActionResult TopCompany()
         {
-            var objCompanyList = _unitOfWork.Company.GetAll().ToList();
+            var objCompanyList = _unitOfWork.Company.GetAll(includeProperties: "CompanyImages").OrderBy(u => u.Id).Take(8).ToList();
             CompanyVM companyVM = new CompanyVM();
             var companyImages = _unitOfWork.CompanyImage.GetAll().ToList();
             companyVM.CompanyList = objCompanyList;
@@ -70,19 +71,21 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
             }
             return View(companyVM);
         }
-        public IActionResult Detail(int? id)
+        [Route("company/{name}")]
+        public IActionResult Detail(string name)
         {
-            var jobPosts = _unitOfWork.JobPost.GetAll(filter: u => u.CompanyId == id).OrderByDescending(x => x.CreatedDate).ToList();
-            var company = _unitOfWork.Company.FirstOrDefault(id);
+            var company = _unitOfWork.Company.Get(filter: u => u.Name == name);
+            var jobPosts = _unitOfWork.JobPost.GetAll(filter: u => u.CompanyId == company.Id).OrderByDescending(x => x.CreatedDate).ToList();
+
             var wishList = _unitOfWork.WishList.GetAll().ToList();
-            var companyComments = _unitOfWork.CompanyComment.GetAll(filter: u => u.CompanyId == id).ToList();
+            var companyComments = _unitOfWork.CompanyComment.GetAll(filter: u => u.CompanyId == company.Id).ToList();
             var applicationUsers = _unitOfWork.ApplicationUser.GetAll().ToList();
             JobPostVM jobs = new()
             {
                 JobPosts = jobPosts,
                 Companies = _unitOfWork.Company.GetAll().ToList(),
                 JobTypes = _unitOfWork.JobType.GetAll().ToList(),
-                CompanyImages = _unitOfWork.CompanyImage.GetAll(filter: u => u.CompanyId == id).ToList(),
+                CompanyImages = _unitOfWork.CompanyImage.GetAll(filter: u => u.CompanyId == company.Id).ToList(),
                 WistList = wishList,
                 Company = company,
                 CompanyComments = companyComments,
@@ -139,7 +142,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize]
+        [Authorize]
         public IActionResult Comment(string name, string email, string rating, string comment, string companyIdInForm)
         {
             CompanyComment companyComment = new CompanyComment();
@@ -153,7 +156,28 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
             TempData["success"] = "Thêm bình luận thành công!";
             return RedirectToAction("Index");
         }
-
+        public IActionResult Follow(int id)
+        {
+            var company = _unitOfWork.Company.FirstOrDefault(id);
+            var userId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).Id;
+            var follow = _unitOfWork.CompanyFollow.GetAll(filter: u => u.CompanyId == id && u.UserId == userId).FirstOrDefault();
+            if (follow == null)
+            {
+                CompanyFollow follow1 = new CompanyFollow();
+                follow1.CompanyId = id;
+                follow1.UserId = userId;
+                _unitOfWork.CompanyFollow.Add(follow1);
+                _unitOfWork.Save();
+                TempData["success"] = "Theo dõi thành công!";
+            }
+            else
+            {
+                _unitOfWork.CompanyFollow.Remove(follow);
+                _unitOfWork.Save();
+                TempData["success"] = "Bỏ theo dõi thành công!";
+            }
+            return RedirectToAction("Index");
+        }
 
         public IActionResult DeleteImage(int imageId)
         {

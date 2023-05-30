@@ -16,6 +16,9 @@ namespace TuyenDungWeb.DataAccess.Repositories
             var userInCompany = _db.ApplicationUsers.FirstOrDefault(p => p.Id == id);
             return userInCompany;
         }
+        //get IdUser for role is Admin in Role Admin many to many applicationuser
+
+
         public void Update(ApplicationUser applicationUser)
         {
             _db.ApplicationUsers.Update(applicationUser);

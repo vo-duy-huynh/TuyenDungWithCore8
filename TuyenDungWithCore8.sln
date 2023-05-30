@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb.Utility", "Tuy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb.Models", "TuyenDungWeb.Models\TuyenDungWeb.Models.csproj", "{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyenDungWeb", "TuyenDungWeb\TuyenDungWeb.csproj", "{07CA814C-3500-443D-BE20-A0FA82965466}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb", "TuyenDungWeb\TuyenDungWeb.csproj", "{07CA814C-3500-443D-BE20-A0FA82965466}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

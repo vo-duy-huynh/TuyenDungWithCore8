@@ -31,10 +31,12 @@ namespace TuyenDungWeb.Models
         public Company Company { get; set; }
         public bool? Visible { get; set; }
         public bool? Status { get; set; }
+        public string? UserPostId { get; set; }
         public int? JobId { get; set; }
         [ForeignKey("JobId")]
         [ValidateNever]
         public Job Job { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
+
     }
 }

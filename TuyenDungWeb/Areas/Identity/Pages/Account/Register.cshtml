@@ -1,122 +1,121 @@
 ﻿@page
 @using TuyenDungWeb.Utility;
 @model RegisterModel
-
-
-<div class="card shadow border-0 mt-4">
-    <div class="card-header bg-secondary bg-gradient ml-0 py-4">
-        <div class="row">
-            <div class="col-12 text-center">
+<div class="bodyForm">
+    <div class="boxRegister">
+        <span class="borderLineRegister"></span>
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="login-regis__form">
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <h2>Đăng ký dành cho quản trị</h2>
+            }
+            else
+            {
+                <h2>Đăng Ký</h2>
+            }
+            <div class="left">
+                <div class="inputBox">
+                    <input asp-for="Input.Email" autocomplete="username" required="required" type="text">
+                    <span>Email</span>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.Password" type="password" required="required">
+                    <span>Mật khẩu</span>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.ConfirmPassword" type="password" required="required">
+                    <span>Nhập lại mật khẩu</span>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for=Input.Address type="text" required="required">
+                    <span>Địa chỉ</span>
+                    <span asp-validation-for="Input.Address" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="button-register">
+                    <input class="input-register" type="submit" value="Đăng Ký">
+                </div>
+            </div>
+            <div class="right">
+                <div class="inputBox">
+                    <input asp-for="Input.FullName" type="text" required="required">
+                    <span>Họ tên</span>
+                    <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.PhoneNumber" type="text" required="required" >
+                    <span>Số điện thoại</span>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox" style="padding:8px 10px 10px">
+                    @*<select asp-for="Input.Role" asp-items="@Model.Input.RoleList">
+                        <option disabled selected>-Chọn người dùng-</option>
+                    </select>*@
+                    <select class="selectpicker form-control" asp-for="Input.Role" asp-items="@Model.Input.RoleList"
+                            data-container="body" data-live-search="true"
+                            title="Chọn người dùng" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                    <i></i>
+                </div>
                 @if (User.IsInRole(SD.Role_Admin))
                 {
-                    <h2 class="py-2 text-white">Dăng ký của admin</h2>
-                }
-                else
-                {
-                    <h2 class="py-2 text-white">Đăng ký</h2>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="card-body p-4">
-        <div class="row pt-3">
-            <div class="col-md-12">
-                <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    
-                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                    <div class="form-floating mb-3 col-md-12">
-                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                        <label asp-for="Input.Email" class="ms-2 text-muted">Email</label>
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.FullName" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.FullName" class="ms-2 text-muted">Họ tên</label>
-                        <span asp-validation-for="Input.FullName" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.PhoneNumber" class="ms-2 text-muted">Số Điện thoại</label>
-                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                        <label asp-for="Input.Password" class="ms-2 text-muted">Mật khẩu</label>
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                        <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Nhập lại mật khẩu</label>
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                    </div>
+                    <div class="inputBox companyListIn" style="padding:8px 10px 10px;display: none;">
 
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.Address" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.Address" class="ms-2 text-muted">Địa chỉ</label>
-                        <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        <select class="selectpicker form-control" asp-for="Input.Role" asp-items="@Model.Input.CompanyList"
+                                data-container="body" data-live-search="true"
+                                title="Chọn công ty" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                     </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <input asp-for="Input.City" class="form-control" placeholder="name@example.com" />
-                        <label asp-for="Input.City" class="ms-2 text-muted">Thành phố</label>
-                        <span asp-validation-for="Input.City" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 col-md-6">
-                        <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
-                            <option disabled selected>-Chọn người dùng-</option>
-                        </select>
-                    </div>
-                    
-                    @if (User.IsInRole(SD.Role_Admin))
-                    {
-                        <div class="form-floating mb-3 col-md-6">
-                            @*<select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">*@
-                            <select asp-for="Input.CompanyId" style="display:none;" asp-items="@Model.Input.CompanyList" class="form-select">
-                                <option disabled selected>-Chọn công ti-</option>
-                            </select>
-                        </div>
-                    }
-                    <div class="col-12">
-                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng ký</button>
-                    </div>
-                </form>
-            </div>
-            @if (!User.IsInRole(SD.Role_Admin))
-            {
-                <div class="col-md-12 p-3 text-center">
-                    <section>
-                        <p class="divider-text d-flex pt-3">or</p>
-
-                        @{
-                            if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                            {
-                                <div>
-                                        <p>
-                                            Chưa cấu hình đăng nhập bằng dịch vụ khác
-                                        </p>
-                                </div>
-                            }
-                            else
-                            {
-                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                                    <div>
-                                        <p>
-                                            @foreach (var provider in Model.ExternalLogins!)
-                                            {
-                                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                            }
-                                        </p>
-                                    </div>
-                                </form>
-                            }
-                        }
-                    </section>
+                }
+                <div class="inputBox careerListIn" style="padding:8px 10px 10px;display: none">
+                    <select multiple class="selectpicker form-control" asp-for="@Model.Input.careerIds"
+                            asp-items="@Model.Input.CareerList" data-container="body" data-live-search="true"
+                            title="Chọn ngành nghề" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                    <i></i>
                 </div>
+            </div>
+            
+            
+        </form>
+        @if (!User.IsInRole(SD.Role_Admin))
+        {
+            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+                <span class="links-register">
+                <div class="links">
+                        Chưa cấu hình đăng nhập bằng dịch vụ khác
+                    </div>
+                </span>
             }
-        </div>
+            else
+            {
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="registerExternal">
+                    <span class="links-register">
+                        <div class="links">
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                if (provider.DisplayName.ToLower().Equals("facebook") == true)
+                                {
+                                    <button type="submit" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName"><i class="facebook-i">f</i></button>
+                                }
+                                if (provider.DisplayName.ToLower().Equals("google") == true)
+                                {
+                                    <button type="submit" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName"><i class="google-i">G</i></button>
+                                }
+                            }
+                    </div>
+                    </span>
+                </form>
+            }
+        }
     </div>
 </div>
-
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -125,12 +124,73 @@
             $('#Input_Role').change(function () {
                 var selection = $('#Input_Role Option:Selected').text();
                 if (selection == 'Company') {
-                    $('#Input_CompanyId').show();
+                    $('.careerListIn').show();
+                    $('.companyListIn').show();
                 }
                 else {
-                    $('#Input_CompanyId').hide();
+                    $('.careerListIn').hide();
+                    $('.companyListIn').hide();
                 }
             })
         })
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
+   
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>*@
+@*    <script>
+        $(document).ready(function () {
+            // Retrieve all options
+            var allOptions = @Html.Raw(Json.Serialize(Model.Input.CareerList));
+
+            // Get the search input element
+            var searchInput = $('#searchInput');
+
+            // Get the select element
+            var selectElement = $('.listbox');
+
+            // Get the selected options list element
+            var selectedOptionsList = $('#selectedOptionsList');
+
+            // Populate the select element with options
+            $.each(allOptions, function (index, option) {
+                var newOption = new Option(option.text, option.value, false, false);
+                selectElement.append(newOption);
+            });
+
+            // Add event listener to the search input
+            searchInput.on('input', function () {
+                var searchTerm = $(this).val().trim().toLowerCase();
+                filterOptions(searchTerm);
+            });
+
+            // Add event listener for option selection
+            selectElement.on('change', function () {
+                updateSelectedOptionsList();
+            });
+
+            // Function to filter options based on the search term
+            function filterOptions(searchTerm) {
+                selectElement.empty();
+                $.each(allOptions, function (index, option) {
+                    if (option.text.toLowerCase().indexOf(searchTerm) !== -1) {
+                        var newOption = new Option(option.text, option.value, false, false);
+                        selectElement.append(newOption);
+                    }
+                });
+            }
+
+            // Function to update the selected options list
+            function updateSelectedOptionsList() {
+                selectedOptionsList.empty();
+                selectElement.find('option:selected').each(function () {
+                    var selectedOption = $(this);
+                    var listItem = $('<li>').text(selectedOption.text());
+                    selectedOptionsList.append(listItem);
+                });
+            }
+        });
+    </script>*@
 }

@@ -1,9 +1,7 @@
-﻿using TuyenDungWeb.Models;
-
-namespace TuyenDungWeb.DataAccess.Repositories.IRepository
+﻿namespace TuyenDungWeb.DataAccess.Repositories.IRepository
 {
-    public interface INotificationRepository : IRepository<AdminNotification>
+    public interface INotificationRepository : IRepository<TuyenDungWeb.Models.Notification>
     {
-        void Update(AdminNotification obj);
+        void Update(TuyenDungWeb.Models.Notification obj);
     }
 }

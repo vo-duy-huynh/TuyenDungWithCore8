@@ -33,6 +33,7 @@ namespace TuyenDungWeb.DataAccess.Repository
                 existingCompany.Content = obj.Content;
                 existingCompany.Tags = obj.Tags;
                 existingCompany.Location = obj.Location;
+                existingCompany.IsApproved = obj.IsApproved;
                 if (obj.CompanyImages != null)
                 {
                     existingCompany.CompanyImages = obj.CompanyImages;

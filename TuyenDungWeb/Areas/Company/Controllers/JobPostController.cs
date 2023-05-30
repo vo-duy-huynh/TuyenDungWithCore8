@@ -21,6 +21,73 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
         }
+        public IActionResult Detail(int? id)
+        {
+            var jobPosts = _unitOfWork.JobPost.Get(u => u.Id == id);
+            var company = _unitOfWork.Company.FirstOrDefault(id);
+            var wishList = _unitOfWork.WishList.GetAll().ToList();
+            var companyComments = _unitOfWork.CompanyComment.GetAll(filter: u => u.CompanyId == jobPosts.CompanyId).ToList();
+            var applicationUsers = _unitOfWork.ApplicationUser.GetAll().ToList();
+            JobPostVM jobs = new()
+            {
+                JobPost = jobPosts,
+                Companies = _unitOfWork.Company.GetAll().ToList(),
+                JobTypes = _unitOfWork.JobType.GetAll().ToList(),
+                CompanyImages = _unitOfWork.CompanyImage.GetAll(filter: u => u.CompanyId == jobPosts.CompanyId).ToList(),
+                WistList = wishList,
+                Company = company,
+                CompanyComments = companyComments,
+                ApplicationUsers = applicationUsers,
+            };
+            jobs.WishListVM = new List<WishListVM>();
+            WishListVM wishListVM;
+            //get userId is loging
+            string userId;
+            if (User.Identity.Name != null)
+            {
+                userId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).Id;
+            }
+            else
+            {
+                userId = null;
+            }
+            foreach (var item in jobs.JobPosts)
+            {
+                WishList wishListTemp;
+                wishListVM = new WishListVM();
+                if (userId != null)
+                {
+                    wishListTemp = jobs.WistList.FirstOrDefault(u => u.JobPostId == item.Id && u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    wishListTemp = null;
+                }
+                if (wishListTemp != null)
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = true;
+                }
+                else
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = false;
+                }
+                jobs.WishListVM.Add(wishListVM);
+            }
+            if (User.Identity.Name != null && _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).FullName != null)
+            {
+                ViewBag.email = User.Identity.Name;
+                ViewBag.fullname = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).FullName;
+            }
+            else
+            {
+                ViewBag.email = null;
+                ViewBag.fullname = null;
+            }
+            return View(jobs);
+
+        }
         public IActionResult Upsert(int? id)
         {
             //get iduser
@@ -56,17 +123,18 @@ namespace TuyenDungWeb.Areas.Company.Controllers
         [HttpPost]
         public IActionResult Upsert(JobPostVM JobPostVM, string CompanyId)
         {
-            JobType existingJobType = new JobType();
-            //int jobTypeId = int.Parse(JobPostVM.SelectedJobTypes[0].ToString());
-            //existingJobType = _unitOfWork.JobType.GetById(jobTypeId);
-            JobPostVM.JobPostTemp.JobTypeId = existingJobType.Id;
+            JobPostVM.JobPostTemp.JobTypeId = int.Parse(JobPostVM.SelectedJobType.ToString());
             JobPostVM.JobPostTemp.JobId = 1;
-
             JobPostVM.JobPostTemp.CreatedDate = DateTime.Now;
             JobPostVM.JobPostTemp.IsApprove = false;
             var companyName = _unitOfWork.Company.GetById(int.Parse(CompanyId)).Name;
             var message = $"Công ty {companyName} đã đăng tin và đang chờ chấp thuận.";
+            var userIdSend = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdRecieve = _unitOfWork.ApplicationUser.GetAll().Where(u => u.Email == "admin@gmail.com").FirstOrDefault().Id;
             JobPostVM.JobPostTemp.Message = message;
+            JobPostVM.JobPostTemp.UserIdSend = userIdSend;
+            JobPostVM.JobPostTemp.UserIdReceive = userIdRecieve;
+
             if (CompanyId == null)
             {
                 JobPostVM.JobPostTemp.CompanyId = int.Parse(JobPostVM.SelectedCompany);
@@ -87,8 +155,9 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             _unitOfWork.Save();
             // create new notification for admin
             var notificationCount = _unitOfWork.JobPostTemp.Count();
-            _notificationService.CreateAdminNotification(message, notificationCount);
-            return RedirectToAction(nameof(OrderConfirmation));
+            _notificationService.CreateAdminNotification(message, notificationCount, userIdRecieve);
+            TempData["success"] = "Chờ duyệt bạn nhé!";
+            return RedirectToAction("Index", "Home", new { area = "Customer" });
             //TempData["success"] = "Thêm/ sửa thành công!";
             //return RedirectToAction("Index", "Home");
         }

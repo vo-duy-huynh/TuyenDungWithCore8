@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using TuyenDungWeb.Utility;
 using TuyenDungWeb.Views.Shared.Components.MessagePage;
 
 namespace TuyenDungWeb.Areas.Identity.Pages.Account
@@ -106,6 +107,22 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User đã đăng nhập");
+                    //if admin
+                    if (User.IsInRole(SD.Role_Admin))
+                    {
+                        return ViewComponent(MessagePage.COMPONENTNAME, new MessagePage.Message()
+                        {
+                            title = "Đã đăng nhập",
+                            htmlcontent = "Đăng nhập thành công",
+                            urlredirect = "/Admin/Home/Index"
+                        });
+                    }
+                    //if employer
+                    if (User.IsInRole("Employer"))
+                    {
+                        return Redirect("/Employer/Home/Index");
+                    }
+
                     return ViewComponent(MessagePage.COMPONENTNAME, new MessagePage.Message()
                     {
                         title = "Đã đăng nhập",

@@ -3,6 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.DataAccess.Services;
 using TuyenDungWeb.Models;
@@ -28,6 +30,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailService _emailService;
+        private readonly ApplicationDbContext _context;
 
         //private readonly IEmailSender _emailSender;
 
@@ -39,7 +42,9 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailService emailService,
             //IEmailSender emailSender,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ApplicationDbContext context
+            )
         {
             _unitOfWork = unitOfWork;
             _roleManager = roleManager;
@@ -49,6 +54,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailService = emailService;
+            _context = context;
             //_emailSender = emailSender;
         }
 
@@ -107,10 +113,6 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             [Display(Name = "Họ và tên")]
             public string FullName { get; set; }
             public string Address { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            [Display(Name = "Postal Code")]
-            public string PostalCode { get; set; }
             public string? Role { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
@@ -118,6 +120,11 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             public int? CompanyId { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> CompanyList { get; set; }
+            public IEnumerable<SelectListItem> CareerList { get; set; }
+            public int[] careerIds { get; set; }
+            public string careerNames { get; set; }
+
+
         }
 
 
@@ -142,34 +149,71 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
-                })
+                }),
+                CareerList = _unitOfWork.Career.GetAll().Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                }),
             };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
-
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                var careerIdsArray = Input.careerIds;
                 var user = CreateUser();
                 user.FullName = Input.FullName;
                 user.Address = Input.Address;
-                user.City = Input.City;
+
                 user.PhoneNumber = Input.PhoneNumber;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                //create company new
+                TuyenDungWeb.Models.Company companyNew = new Models.Company();
                 if (Input.Role == SD.Role_Company)
                 {
-                    user.CompanyId = Input.CompanyId;
+
+                    companyNew.CompanyEmail = Input.Email;
+                    companyNew.Name = Input.FullName;
+                    companyNew.Location = Input.Address;
+                    companyNew.PhoneNumber = Input.PhoneNumber;
+                    companyNew.IsApproved = false;
+                    _context.Companies.Add(companyNew);
+                    await _context.SaveChangesAsync();
+                    foreach (var careerId in careerIdsArray)
+                    {
+                        var career = await _context.Careers.FindAsync(careerId);
+                        var company = await _context.Companies.FindAsync(companyNew.Id);
+                        if (career != null)
+                        {
+                            var companyCareer = new CompanyCareer
+                            {
+                                CompanyId = company.Id,
+                                CareerId = career.Id
+                            };
+
+                            _context.CompanyCareers.Add(companyCareer);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+
                 }
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    user.CompanyId = companyNew.Id;
+                    user.Company = companyNew;
+                    await _userManager.UpdateAsync(user);
+                    TempData["Success"] = "Đăng kí thành công, chờ quản trị xác nhận nhé!";
                     var messageEmail = new TuyenDungWeb.Models.Message(new string[] { Input.Email }, "Đăng kí thành công", $"Tài Khoản: {Input.Email}, Mật khẩu: {Input.Password} Hãy khám phá website nhé!!!.");
                     _emailService.SendEmail(messageEmail);
                     if (!String.IsNullOrEmpty(Input.Role))

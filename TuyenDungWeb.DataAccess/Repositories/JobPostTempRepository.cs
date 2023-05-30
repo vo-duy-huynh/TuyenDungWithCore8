@@ -43,6 +43,9 @@ namespace TuyenDungWeb.DataAccess.Repositories
                 objFromDb.Message = obj.Message;
                 objFromDb.CompanyId = obj.CompanyId;
                 objFromDb.JobTypeId = obj.JobTypeId;
+                objFromDb.UserIdReceive = obj.UserIdReceive;
+                objFromDb.UserIdSend = obj.UserIdSend;
+                objFromDb.JobPostId = obj.JobPostId;
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
+using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
@@ -12,10 +14,13 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public JobPostTempController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        private readonly NotificationService _notificationService;
+
+        public JobPostTempController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, NotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
+            _notificationService = notificationService;
         }
         public IActionResult Index()
         {
@@ -33,6 +38,11 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
+                JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
                 JobPostTemp = _unitOfWork.JobPostTemp.GetById(id),
                 JobPost = new JobPost()
             };
@@ -44,6 +54,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             }
             else
             {
+                JobPostVM.SelectedJobType = JobPostVM.JobPostTemp.JobTypeId.ToString();
                 return View(JobPostVM);
             }
 
@@ -68,52 +79,34 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             JobPostVM.JobPost.Status = true;
             JobPostVM.JobPost.Visible = true;
             JobPostVM.JobPost.UrlHandle = UrlHandle;
+            JobPostVM.JobPost.UserPostId = JobPostVM.JobPostTemp.UserIdSend;
             JobPostVM.JobPostTemp.IsApprove = true;
             JobPostVM.JobPost.JobId = int.Parse(JobPostVM.SelectedJob);
+            JobPostVM.JobPost.JobTypeId = int.Parse(JobPostVM.SelectedJobType);
             JobPostVM.JobPostTemp.JobId = int.Parse(JobPostVM.SelectedJob);
+            JobPostVM.JobPostTemp.UserIdReceive = JobPostVM.JobPostTemp.UserIdSend;
+            JobPostVM.JobPostTemp.JobPostId = _unitOfWork.JobPost.GetNextId();
+            JobPostVM.JobPostTemp.UserIdSend = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            JobPostVM.JobPostTemp.Message = JobPostVM.JobPost.Heading.ToLower() + " đã được duyệt";
             if (JobPostVM.JobPost.Id == 0)
             {
                 _unitOfWork.JobPost.Add(JobPostVM.JobPost);
+                _unitOfWork.Save();
                 _unitOfWork.JobPostTemp.Update(JobPostVM.JobPostTemp);
+                _unitOfWork.Save();
+                _notificationService.CreateNotificationForCompanyAfterAdmin(JobPostVM.JobPostTemp.UserIdReceive);
             }
             else
             {
                 _unitOfWork.JobPost.Update(JobPostVM.JobPost);
+                _unitOfWork.Save();
             }
 
-            _unitOfWork.Save();
 
-            TempData["success"] = "Thêm/ sửa thành công!";
+
+            TempData["success"] = "Cập nhật thành công!";
             return RedirectToAction("Index");
         }
-
-
-        //public IActionResult DeleteImage(int imageId)
-        //{
-        //var imageToBeDeleted = _unitOfWork.JobPostImage.Get(u => u.Id == imageId);
-        //int JobPostId = imageToBeDeleted.JobPostId;
-        //if (imageToBeDeleted != null)
-        //{
-        //    if (!string.IsNullOrEmpty(imageToBeDeleted.ImageUrl))
-        //    {
-        //        var oldImagePath =
-        //                       Path.Combine(_webHostEnvironment.WebRootPath,
-        //                       imageToBeDeleted.ImageUrl.TrimStart('\\'));
-
-        //        if (System.IO.File.Exists(oldImagePath))
-        //        {
-        //            System.IO.File.Delete(oldImagePath);
-        //        }
-        //    }
-
-        //    _unitOfWork.JobPostImage.Remove(imageToBeDeleted);
-        //    _unitOfWork.Save();
-
-        //    TempData["success"] = "Xóa ảnh thành công";
-        //}
-
-        //return RedirectToAction(nameof(Upsert), new { id = JobPostId });
-        //}
         #region API CALLS
 
         [HttpGet]

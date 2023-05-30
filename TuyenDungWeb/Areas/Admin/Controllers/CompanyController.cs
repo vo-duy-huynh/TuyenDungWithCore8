@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
+using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CompanyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -31,6 +33,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             if (id == null || id == 0)
             {
                 companyVM = new CompanyVM();
+                companyVM.Company = new Models.Company();
                 companyVM.Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,

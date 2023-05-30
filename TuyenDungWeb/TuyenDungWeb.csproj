@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\adminmanagerprofile.js" />
     <Content Remove="wwwroot\js\phantrang.js" />
   </ItemGroup>
 
@@ -22,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="bootstrap" Version="5.0.0" />
+    <PackageReference Include="jQuery" Version="3.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.0-preview.4.23260.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0-preview.4.23260.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0-preview.3.23177.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0-preview.3.23177.8" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
@@ -35,7 +40,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0-preview.3.23206.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0-preview.4.23261.6" />
+    <PackageReference Include="Select2.js" Version="4.0.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,13 +49,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Employee\Controllers\" />
+    <Folder Include="Areas\Identity\Pages\Shared\" />
     <Folder Include="Controllers\" />
+    <Folder Include="wwwroot\cvs\" />
+    <Folder Include="wwwroot\letters\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\assets\dist\virtual-select.js" />
     <None Include="wwwroot\assets\dist\virtual-select.min.js" />
+    <None Include="wwwroot\js\adminmanagerprofile.js" />
     <None Include="wwwroot\js\phantrang.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Areas\AdminTest\Views\_Layout.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

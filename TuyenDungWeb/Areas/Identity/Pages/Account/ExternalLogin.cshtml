@@ -5,13 +5,12 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+<h2 id="external-login-title">Liên kết tài khoản với @Model.ProviderDisplayName của bạn.</h2>
 <hr />
 
 <p id="external-login-description" class="text-info">
-    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
-    Please enter an email address for this site below and click the Register button to finish
-    logging in.
+    Bạn đã xác thực thành công với <strong>@Model.ProviderDisplayName</strong>.
+    Vui lòng nhập địa chỉ email để đăng nhập bằng facebook cho web này.
 </p>
 
 <div class="row">
@@ -22,6 +21,16 @@
                 <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Địa chỉ email."/>
                 <label asp-for="Input.Email" class="form-label">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FullName" class="form-control" autocomplete="fullname" placeholder="Nhập họ tên." />
+                <label asp-for="Input.FullName" class="form-label">Họ tên</label>
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" placeholder="Mật khẩu."/>
+                <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Đăng ký</button>
         </form>

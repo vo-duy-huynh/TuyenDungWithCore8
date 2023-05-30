@@ -24,11 +24,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
-//builder.Services.AddAuthentication().AddFacebook(option =>
-//{
-//    option.AppId = "193813826680436";
-//    option.AppSecret = "8fc42ae3f4f2a4986143461d4e2da919";
-//});
+
+builder.Services.AddAuthentication().AddFacebook(option =>
+{
+    option.AppId = "183853191108679";
+    option.AppSecret = "a618f63ab9c17c1fa5a9f947b38ef124";
+});
+builder.Services.AddAuthentication().AddGoogle(option =>
+{
+    option.ClientId = "14343377810-ictv6a6ddi5bs0k4v0rrm19bjdsleiov.apps.googleusercontent.com";
+    option.ClientSecret = "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";
+});
 //builder.Services.AddAuthentication().AddMicrosoftAccount(option =>
 //{
 //    option.ClientId = "ec4d380d-d631-465d-b473-1e26ee706331";
@@ -78,7 +84,6 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
-
 app.Run();
 //void SeedDatabase()
 //{

@@ -1,19 +1,29 @@
 ﻿@model List<Company>
-
+@{
+    ViewBag.Title = "Quản lý Công Ty";
+}
+<div class="content-header pt-5">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewBag.Title</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
 <div class="card shadow border-0 my-4">
-    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h2 class="text-white py-2">Danh sách công ty</h2>
-            </div>
-        </div>
-    </div>
     <div class="card-body p-4">
         <div class="row pb-3">
             <div class="col-6">
             </div>
             <div class="col-6 text-end">
-                <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
+                <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary float-right">
                     <i class="bi bi-plus-circle"></i>  Tạo mới
                 </a>
             </div>

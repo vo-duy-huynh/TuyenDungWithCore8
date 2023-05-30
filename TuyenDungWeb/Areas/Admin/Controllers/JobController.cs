@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
+using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class JobController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -22,18 +25,28 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Job obj)
+        public IActionResult Create(string Name, string Note)
         {
-
-            if (ModelState.IsValid)
+            if (Note == null)
             {
-                _unitOfWork.Job.Add(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Thêm thành công";
+                Note = "";
+            }
+            Job job = new Job();
+            job.Name = Name;
+            job.Note = Note;
+            if (Name == null)
+            {
+                TempData["error"] = "Lỗi";
                 return RedirectToAction("Index");
             }
-            return View();
+            else if (Name != null)
+            {
+                _unitOfWork.Job.Add(job);
+                _unitOfWork.Save();
+                TempData["success"] = "Thêm thành công";
+            }
 
+            return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int? id)
@@ -53,45 +66,44 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             return View(JobFromDb);
         }
         [HttpPost]
-        public IActionResult Edit(Job obj)
+        public IActionResult Edit(string editId, string editName, string editNote)
         {
-            if (ModelState.IsValid)
+            if (editNote == null)
             {
-                _unitOfWork.Job.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Cập nhật thành công";
-                return RedirectToAction("Index");
+                editNote = "";
             }
-            return View();
+            Job obj = _unitOfWork.Job.Get(u => u.Id == int.Parse(editId));
+            if (obj != null)
+            {
+                obj.Name = editName;
+                obj.Note = editNote;
 
+            }
+
+            _unitOfWork.Job.Update(obj);
+            _unitOfWork.Save();
+            TempData["success"] = "Cập nhật thành công";
+            return RedirectToAction("Index");
         }
-
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Job> objJobList = _unitOfWork.Job.GetAll().ToList();
+            return Json(new { data = objJobList });
+        }
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var jobToBeDeleted = _unitOfWork.Job.Get(u => u.Id == id);
+            if (jobToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Lỗi trong khi xóa" });
             }
-            Job? JobFromDb = _unitOfWork.Job.Get(u => u.Id == id);
 
-            if (JobFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(JobFromDb);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            Job? obj = _unitOfWork.Job.Get(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Job.Remove(obj);
+            _unitOfWork.Job.Remove(jobToBeDeleted);
             _unitOfWork.Save();
-            TempData["success"] = "Xóa thành công";
-            return RedirectToAction("Index");
+
+            return Json(new { success = true, message = "Xóa thành công" });
         }
     }
 }

@@ -1,0 +1,140 @@
+﻿@model JobPostVM
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                @Model.JobPostTemp.Id
+                <h2 class="text-white py-2"> @(Model.JobPostTemp.Id != 0 ? "Update" : "Create") JobPost</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="JobPostTemp.Id" hidden />
+            <input asp-for="JobPostTemp.CompanyId" hidden />
+            <input asp-for="JobPostTemp.CreatedDate" hidden />
+            <input asp-for="JobPostTemp.EndDate" hidden />
+            <input asp-for="JobPostTemp.Message" hidden />
+            <input asp-for="JobPostTemp.UserIdSend" hidden />
+
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.Heading" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.Heading" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.Heading" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input id="UrlHandle" name="UrlHandle" class="form-control border-0 shadow" />
+                            <label  class="ms-2">UrlHandle</label>
+                            
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="JobPostTemp.Content" class="ms-2 text-muted"></label>
+                            <textarea asp-for="JobPostTemp.Content" class="form-control border-0 shadow"></textarea>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.ShortDescription" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.ShortDescription" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.ShortDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.NumberOfRecruiting" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.NumberOfRecruiting" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.NumberOfRecruiting" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.Location" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.Location" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.Location" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="form-select border-0 shadow">
+                            </select>
+                            <label asp-for="SelectedJobType" class="ms-2">Chọn kiểu việc làm</label>
+                            <span asp-validation-for="SelectedJob" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedJob" asp-items="@Model.JobList" class="form-select border-0 shadow">
+                            </select>
+                            <label asp-for="SelectedJob" class="ms-2">Chọn việc làm</label>
+                            <span asp-validation-for="SelectedJob" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.Experience" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.Experience" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.Experience" class="text-danger"></span>
+                        </div>
+                       @* <div class="form-floating py-2 col-12">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Visible">
+                                    <input type="checkbox" asp-for="JobPostTemp.Visible" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Visible)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Status">
+                                    <input asp-for="JobPostTemp.Status" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Status)
+                                </label>
+                            </div>
+                        </div>*@
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.Salary" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.Salary" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.Salary" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPostTemp.Gender" class="form-control border-0 shadow" />
+                            <label asp-for="JobPostTemp.Gender" class="ms-2"></label>
+                            <span asp-validation-for="JobPostTemp.Gender" class="text-danger"></span>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.JobPostTemp.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="JobPost" asp-action="Index" class="btn btn-outline-primary border  form-control">
+                                   Trở về
+                                </a>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons  lists   table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

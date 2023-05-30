@@ -14,10 +14,13 @@ namespace TuyenDungWeb.DataAccess.Data
         public DbSet<JobPostTemp> JobPostTemps { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Career> Careers { get; set; }
+        public DbSet<CompanyCareer> CompanyCareers { get; set; }
         public DbSet<JobPostComment> JobPostComments { get; set; }
         public DbSet<CompanyComment> CompanyComments { get; set; }
+        public DbSet<CompanyFollow> CompanyFollows { get; set; }
         public DbSet<JobPostLike> JobPostLikes { get; set; }
-        public DbSet<AdminNotification> AdminNotifications { get; set; }
+        public DbSet<TuyenDungWeb.Models.Notification> Notifications { get; set; }
 
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobType> JobTypes { get; set; }
@@ -26,14 +29,21 @@ namespace TuyenDungWeb.DataAccess.Data
         public DbSet<CompanyImage> CompanyImages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ProfileHeader> ProfileHeaders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Job>().HasData(
                new Job { Id = 1, Name = "Tester", Note = "No" },
+               new Job { Id = 4, Name = "Kinh Doanh", Note = "No" },
+               new Job { Id = 5, Name = "Quản Trị Hệ Thống", Note = "No" },
+               new Job { Id = 6, Name = "Data Analyst", Note = "No" },
+               new Job { Id = 7, Name = "Sales", Note = "No" },
+               new Job { Id = 8, Name = "Tester", Note = "No" },
                new Job { Id = 2, Name = "Hacker", Note = "No" });
             modelBuilder.Entity<JobType>().HasData(
                 new JobType { Id = 1, Name = "Fulltime" },
+                new JobType { Id = 3, Name = "Intern" },
                 new JobType { Id = 2, Name = "Parttime" });
             modelBuilder.Entity<Tag>().HasData(
                 new Tag { Id = 1, Name = "C#" },

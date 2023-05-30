@@ -20,7 +20,10 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             return _db.JobPosts.Include("Tags").FirstOrDefault(u => u.Id == id);
         }
-
+        public int? GetNextId()
+        {
+            return _db.JobPosts.Max(u => u.Id) + 1;
+        }
         public void Update(JobPost obj)
         {
             var objFromDb = _db.JobPosts.Include("Tags").FirstOrDefault(u => u.Id == obj.Id);

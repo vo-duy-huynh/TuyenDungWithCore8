@@ -12,7 +12,9 @@ namespace TuyenDungWeb.DataAccess.Repositories
         public IJobPostTempRepository JobPostTemp { get; private set; }
         public ICompanyRepository Company { get; private set; }
         public ICompanyCommentRepository CompanyComment { get; private set; }
+        public ICompanyFollowRepository CompanyFollow { get; private set; }
         public ITagRepository Tag { get; private set; }
+        public ICareerRepository Career { get; private set; }
         public IJobRepository Job { get; private set; }
 
 
@@ -32,7 +34,9 @@ namespace TuyenDungWeb.DataAccess.Repositories
             JobPostTemp = new JobPostTempRepository(_db);
             Company = new CompanyRepository(_db);
             CompanyComment = new CompanyCommentRepository(_db);
+            CompanyFollow = new CompanyFollowRepository(_db);
             Tag = new TagRepository(_db);
+            Career = new CareerRepository(_db);
             Job = new JobRepository(_db);
             ProfileHeader = new ProfileHeaderRepository(_db);
             Notification = new NotificationRepository(_db);

@@ -318,7 +318,23 @@ color: #ffffff;
     background-color: #E5F7ED;
     border-radius: 50%;
 }
-.count-notification{
+.message-chat-item__icon {
+    text-align: center;
+    margin-top: 12px;
+    margin-right: 6px;
+    margin-left: 17px
+}
+#sendButton{
+    background-color: #2B9BFF;
+    color: #E5F7ED;
+    border-radius: 5px;
+}
+#sendButton:hover{
+    background-color: aquamarine;
+    color: #ec921d;
+}
+
+.count-notification {
     color: red;
     font-weight: bold;
     margin-left: -20px;
@@ -362,15 +378,47 @@ color: #ffffff;
 /*** Category ***/
 .cat-item {
     display: block;
-    box-shadow: 0 0 45px rgba(0, 0, 0, .08);
-    border: 1px solid transparent;
-    transition: .5s;
+    text-align: center;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease;
 }
 
-.cat-item:hover {
-    border-color: rgba(0, 0, 0, .08);
-    box-shadow: none;
-}
+    .cat-item:hover {
+        transform: translateY(-20px);
+    }
+
+    .cat-item img {
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .cat-item h3 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .cat-item p {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .cat-item .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+        .cat-item .btn:hover {
+            background-color: #45a049;
+        }
 
 
 /*** Job Listing ***/
@@ -380,36 +428,47 @@ color: #ffffff;
 
 .job-item {
     border: 1px solid transparent;
-    border-radius: 2px;
-    box-shadow: 0 0 45px rgba(0, 0, 0, .08);
-    transition: .5s;
-}
-.job-item__companyName{
-    font-size: 14px;
-    font-weight: 400;
-    color: grey;
-}
-.job-item:hover {
-    border-color: rgba(0, 0, 0, .08);
-    box-shadow: none;
-}
-.job-item1 {
-    border: 1px solid transparent;
-    border-radius: 2px;
-    box-shadow: 0 0 45px rgba(0, 0, 0, .08);
-    transition: .5s;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-.job-item__companyName {
-    font-size: 14px;
-    font-weight: 400;
-    color: grey;
-}
+    .job-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
 
-.job-item1:hover {
-    border-color: rgba(0, 0, 0, .08);
-    box-shadow: none;
-}
+    .job-item .job-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .job-item .job-description {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .job-item .btn {
+        padding: 8px 16px;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+        .job-item .btn:hover {
+            background-color: rgb(80, 163, 136);
+            color: bisque;
+            /* size more bigger */
+            transform: scale(1.1);
+        }
+
 
 /*** Testimonial ***/
 .testimonial-carousel .owl-item .testimonial-item,

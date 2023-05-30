@@ -12,8 +12,10 @@ namespace TuyenDungWeb.Models
         public string? Content { get; set; }
         public string? PhoneNumber { get; set; }
         public string? CompanyEmail { get; set; }
+        public bool? IsApproved { get; set; }
         [ValidateNever]
         public List<CompanyImage>? CompanyImages { get; set; }
         public virtual ICollection<Tag>? Tags { get; set; }
+        public ICollection<CompanyCareer> CompanyCareers { get; set; }
     }
 }

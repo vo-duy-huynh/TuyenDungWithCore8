@@ -22,20 +22,25 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Tag obj)
+        public IActionResult Create(string Name, string DisplayName)
         {
 
-            if (ModelState.IsValid)
+            Tag tag = new Tag();
+            tag.Name = Name;
+            tag.DisplayName = DisplayName;
+            if (Name == null)
             {
-                _unitOfWork.Tag.Add(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Thêm thành công";
+                TempData["error"] = "Lỗi";
                 return RedirectToAction("Index");
             }
-            return View();
-
+            else if (Name != null)
+            {
+                _unitOfWork.Tag.Add(tag);
+                _unitOfWork.Save();
+                TempData["success"] = "Thêm thành công";
+            }
+            return RedirectToAction("Index");
         }
-
         public IActionResult Edit(int? id)
         {
             if (id == null || id == 0)
@@ -53,45 +58,41 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             return View(TagFromDb);
         }
         [HttpPost]
-        public IActionResult Edit(Tag obj)
+        public IActionResult Edit(string editId, string editName, string editDisplayName)
         {
-            if (ModelState.IsValid)
+
+            Tag obj = _unitOfWork.Tag.Get(u => u.Id == int.Parse(editId));
+            if (obj != null)
             {
-                _unitOfWork.Tag.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Cập nhật thành công";
-                return RedirectToAction("Index");
+                obj.Name = editName;
+                obj.DisplayName = editDisplayName;
+
             }
-            return View();
 
+            _unitOfWork.Tag.Update(obj);
+            _unitOfWork.Save();
+            TempData["success"] = "Cập nhật thành công";
+            return RedirectToAction("Index");
         }
-
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var allObj = _unitOfWork.Tag.GetAll().ToList();
+            return Json(new { data = allObj });
+        }
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var tagToBeDeleted = _unitOfWork.Tag.Get(u => u.Id == id);
+            if (tagToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Lỗi trong khi xóa" });
             }
-            Tag? TagFromDb = _unitOfWork.Tag.Get(u => u.Id == id);
 
-            if (TagFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(TagFromDb);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            Tag? obj = _unitOfWork.Tag.Get(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Tag.Remove(obj);
+            _unitOfWork.Tag.Remove(tagToBeDeleted);
             _unitOfWork.Save();
-            TempData["success"] = "Xóa thành công";
-            return RedirectToAction("Index");
+
+            return Json(new { success = true, message = "Xóa thành công" });
         }
     }
 }

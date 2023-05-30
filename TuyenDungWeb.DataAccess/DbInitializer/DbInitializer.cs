@@ -56,10 +56,7 @@ namespace TuyenDungWeb.DataAccess.DbInitializer
                     Email = "admin@gmail.com",
                     FullName = "Vo Duy Huynh",
                     PhoneNumber = "0339968544",
-                    Address = "test 123",
-                    State = "No",
-                    PostalCode = "1234",
-                    City = "Ho Chi Minh"
+                    Address = "Ho Chi Minh",
                 }, "123456Aa@").GetAwaiter().GetResult();
 
 

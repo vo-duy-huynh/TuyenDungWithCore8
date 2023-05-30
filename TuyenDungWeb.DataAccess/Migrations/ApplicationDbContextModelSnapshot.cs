@@ -259,7 +259,7 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TuyenDungWeb.Models.AdminNotification", b =>
+            modelBuilder.Entity("TuyenDungWeb.Models.Career", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,19 +267,13 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdminNotifications");
+                    b.ToTable("Careers");
                 });
 
             modelBuilder.Entity("TuyenDungWeb.Models.Company", b =>
@@ -295,6 +289,9 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsApproved")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
@@ -340,6 +337,29 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyCareer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CareerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanyCareers");
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.CompanyComment", b =>
                 {
                     b.Property<int>("Id")
@@ -369,6 +389,28 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyComments");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyFollow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanyFollows");
                 });
 
             modelBuilder.Entity("TuyenDungWeb.Models.CompanyImage", b =>
@@ -415,6 +457,36 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            Name = "Tester",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Kinh Doanh",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Quản Trị Hệ Thống",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Data Analyst",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Sales",
+                            Note = "No"
+                        },
+                        new
+                        {
+                            Id = 8,
                             Name = "Tester",
                             Note = "No"
                         },
@@ -482,6 +554,9 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UrlHandle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserPostId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("Visible")
@@ -566,12 +641,15 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("Experience")
+                        .IsRequired()
                         .HasColumnType("float");
 
                     b.Property<string>("Gender")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Heading")
@@ -584,10 +662,14 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Property<int?>("JobId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("JobPostId")
+                        .HasColumnType("int");
+
                     b.Property<int>("JobTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -598,9 +680,19 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Salary")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserIdReceive")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserIdSend")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -632,9 +724,41 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         },
                         new
                         {
+                            Id = 3,
+                            Name = "Intern"
+                        },
+                        new
+                        {
                             Id = 2,
                             Name = "Parttime"
                         });
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("TuyenDungWeb.Models.ProfileHeader", b =>
@@ -644,10 +768,6 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -664,11 +784,25 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CoverLetter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("JobPostId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("MatriculationDate")
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MatriculationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -677,15 +811,17 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SessionId")
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("UserReceiveId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("JobPostId");
 
                     b.ToTable("ProfileHeaders");
                 });
@@ -774,20 +910,11 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("CompanyId");
@@ -876,7 +1003,37 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyCareer", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.Career", "Career")
+                        .WithMany("CompanyCareers")
+                        .HasForeignKey("CareerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
+                        .WithMany("CompanyCareers")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Career");
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.CompanyComment", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.CompanyFollow", b =>
                 {
                     b.HasOne("TuyenDungWeb.Models.Company", "Company")
                         .WithMany()
@@ -955,7 +1112,15 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TuyenDungWeb.Models.JobPost", "JobPost")
+                        .WithMany()
+                        .HasForeignKey("JobPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("JobPost");
                 });
 
             modelBuilder.Entity("TuyenDungWeb.Models.WishList", b =>
@@ -978,8 +1143,15 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.Career", b =>
+                {
+                    b.Navigation("CompanyCareers");
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.Company", b =>
                 {
+                    b.Navigation("CompanyCareers");
+
                     b.Navigation("CompanyImages");
                 });
 #pragma warning restore 612, 618

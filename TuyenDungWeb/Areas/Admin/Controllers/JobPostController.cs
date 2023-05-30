@@ -48,7 +48,8 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
-                })
+                }),
+                JobPost = new JobPost(),
 
             };
             if (id == null || id == 0)

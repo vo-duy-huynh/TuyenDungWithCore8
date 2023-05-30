@@ -10,6 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0-preview.3.23177.8" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.5.0-pre.11" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.5.0-pre.11" />
   </ItemGroup>
 
 </Project>

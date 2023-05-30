@@ -1,0 +1,46 @@
+﻿<div class="float-right">
+
+    <div class="chat-popup" id="myForm">
+        <form class="form-container">
+            <h3>Trò Chuyện</h3>
+
+            <label for="msg"><b>Nội Dung Tin</b></label>
+            <textarea placeholder="Nhập nội dung" id="messageInput" name="messageInput" required></textarea>
+            <input type="button" id="sendButton" value="Gửi" />
+            
+            <hr />
+
+            <div id="chatMessages"></div>
+            @*<button type="submit" class="btn">Send</button>*@
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@5.0.11/dist/browser/signalr.min.js"></script>
+
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/adminNotificationsHub").build();
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var encodedUser = $("<div />").text(user).html();
+            var encodedMessage = $("<div />").text(message).html();
+            var listItem = $("<li />").html("<strong>" + encodedUser + "</strong>: " + encodedMessage);
+            $("#chatMessages").append(listItem);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        $("#sendButton").click(function () {
+            var user = $("#userInput").val();
+            var message = $("#messageInput").val();
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            $("#messageInput").val("");
+        });
+    </script>
+}
