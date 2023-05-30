@@ -66,14 +66,20 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var notificationItems = _unitOfWork.JobPostTemp
                 .GetAll().OrderBy(n => n.CreatedDate).Where(u => u.UserIdReceive == userId).ToList();
-            return Json(notificationItems);
+            List<object> result = new List<object>();
+            foreach (var item in notificationItems)
+            {
+                var jobPost = _unitOfWork.JobPost.Get(u => u.Id == item.JobPostId);
+                result.Add(new { jobPost, item });
+            }
+            return Json(result);
         }
         [Authorize]
         public IActionResult GetNotificationItemsForCompanyAfterApproveApply()
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var notificationItems = _unitOfWork.ProfileHeader
-                .GetAll().OrderBy(n => n.ApplyDate).Where(u => u.UserReceiveId == userId && u.Status != "Pending").ToList();
+                .GetAll(includeProperties: "JobPost,ApplicationUser").OrderBy(n => n.ApplyDate).Where(u => u.UserReceiveId == userId && u.Status != "Pending").ToList();
             return Json(notificationItems);
         }
         [HttpPost]
@@ -84,18 +90,16 @@ namespace TuyenDungWeb.Areas.Company.Controllers
 
             // Check if the item is already in the wishlist
             var WishList = _unitOfWork.WishList.GetFirstOrDefault(jobPostId, userId);
-            //get jobPost by id
             var jobPost = _unitOfWork.JobPost.Get(u => u.Id == jobPostId);
+            List<WishList> wishlistItems;
             if (WishList != null)
             {
-                // Item is already in the wishlist
                 _unitOfWork.WishList.Remove(WishList);
                 _unitOfWork.Save();
-
-                //get userId
-                WishList wishlistItem = _unitOfWork.WishList
-               .Get(u => u.ApplicationUserId == userId);
-                return Json(new { success = true, message = "Bạn đã bỏ yêu thích thành công.", wishlistCount = wishlistItem.Count, wishlistItems = WishList, jobPost = jobPost });
+                wishlistItems = _unitOfWork.WishList
+                    .GetWishListForUser(userId)
+                    .ToList();
+                return Json(new { success = true, message = "Bạn đã bỏ yêu thích thành công.", wishlistCount = wishlistItems.Count, wishlistItems = WishList, jobPost = jobPost });
             }
 
             // Item is not in the wishlist, so add it
@@ -117,9 +121,11 @@ namespace TuyenDungWeb.Areas.Company.Controllers
 
             _unitOfWork.WishList.Add(newWishList);
             _unitOfWork.Save();
-            List<object> wishlistItems = newWishLists;
+            wishlistItems = _unitOfWork.WishList
+                   .GetWishListForUser(userId)
+                   .ToList();
 
-            return Ok(new { message = "Bạn đã yêu thích thành công.", wishlistCount = wishlistItems.Count, wishlistItems = wishlistItems, jobPost = jobPost });
+            return Ok(new { message = "Bạn đã yêu thích thành công.", wishlistCount = wishlistItems.Count, wishlistItems = itemInNewWishList, jobPost = jobPost });
         }
         [HttpPost]
         [Authorize]

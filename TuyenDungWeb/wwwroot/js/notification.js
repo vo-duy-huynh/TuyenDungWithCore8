@@ -32,9 +32,9 @@ connection.on("ReceiveNotification", function (message, notificationCount, notif
         $.get('/Company/Home/GetNotificationItemsForCompanyAfterApprove', function (data) {
             var wishlistContainer = $('<ul class="notification-ul"></ul>');
             $.each(data, function (index, item) {
-                var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.item.id + '"></li>');
                 var titleElement = $('<div class="notificationlist-item__title"></div>');
-                var linkElement = $('<a href="/Customer/Home/Detail/' + item.jobPostId + '">' + item.message + '</a>');
+                var linkElement = $('<a href="/ViecLam/' + item.jobPost.urlHandle + '">' + item.item.message + '</a>');
 
                 titleElement.append(linkElement);
                 itemElement.append(titleElement);
@@ -72,7 +72,7 @@ connection.on("ReceiveNotification", function (message, notificationCount, notif
             $.each(data, function (index, item) {
                 var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
                 var titleElement = $('<div class="notificationlist-item__title"></div>');
-                var linkElement = $('<a href="/Customer/Home/Detail/' + item.jobPostId + '">' + item.message + '  ' + item.jobTitle + '</a>');
+                var linkElement = $('<a href="/ViecLam/' + item.jobPost.urlHandle + '">' + item.message + '  ' + item.jobTitle + '</a>');
 
                 titleElement.append(linkElement);
                 itemElement.append(titleElement);
