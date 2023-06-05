@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
@@ -7,6 +8,7 @@ using TuyenDungWeb.Models.ViewModels;
 namespace TuyenDungWeb.Areas.Company.Controllers
 {
     [Area("Company")]
+    [Authorize]
     public class ProfileUserApplyController : Controller
     {
         private readonly NotificationService _notificationService;
@@ -21,9 +23,7 @@ namespace TuyenDungWeb.Areas.Company.Controllers
 
         public IActionResult Update(int? id)
         {
-            //get profileHeader
             var profileHeader = _unitOfWork.ProfileHeader.Get(filter: u => u.Id == id);
-            //get jobPost
             var jobPost = _unitOfWork.JobPost.Get(filter: u => u.Id == profileHeader.JobPostId);
             if (jobPost.NumberOfRecruiting <= 0)
             {
@@ -89,7 +89,6 @@ namespace TuyenDungWeb.Areas.Company.Controllers
                 jobPostVM.ProfileHeader.MatriculationDate = DateTime.Now;
                 jobPostVM.ProfileHeader.Status = "Approved";
                 jobPostVM.ProfileHeader.Message = "Chúc mừng bạn đã trúng tuyển ";
-                //update so luong tuyen dung
                 var jobPost = _unitOfWork.JobPost.Get(filter: u => u.Id == jobPostVM.ProfileHeader.JobPostId);
                 jobPost.NumberOfRecruiting = jobPost.NumberOfRecruiting - 1;
                 _unitOfWork.JobPost.Update(jobPost);

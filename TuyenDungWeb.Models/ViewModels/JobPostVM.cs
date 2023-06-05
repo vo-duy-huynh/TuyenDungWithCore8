@@ -23,6 +23,7 @@ namespace TuyenDungWeb.Models.ViewModels
 
         public List<WishListVM> WishListVMLikeJobType { get; set; }
         public List<WishList> WistList { get; set; }
+        public List<Tag> listTag { get; set; }
         public List<CompanyImage> CompanyImages { get; set; }
         public List<JobType> JobTypes { get; set; }
         [ValidateNever]

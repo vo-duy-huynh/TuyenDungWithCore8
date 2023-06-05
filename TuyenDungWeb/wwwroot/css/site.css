@@ -11,6 +11,12 @@ for details on configuring this project to bundle and minify static web assets. 
     box-shadow: 0 -2px;
 }
 
+.app {
+    display: flex;
+    height: 90vh;
+    justify-content: space-between;
+    background-color: white;
+}
 
 
 a.navbar-brand {

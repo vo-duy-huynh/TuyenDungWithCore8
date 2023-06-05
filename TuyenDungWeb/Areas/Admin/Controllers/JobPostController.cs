@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
@@ -7,7 +8,7 @@ using TuyenDungWeb.Models.ViewModels;
 namespace TuyenDungWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize]
     public class JobPostController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -64,9 +65,6 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
                 jobPost.Tags.ToList().ForEach(t => tagIds.Add(t.Id));
                 JobPostVM.JobPost = jobPost;
                 JobPostVM.tagIds = tagIds.ToArray();
-                JobPostVM.SelectedCompany = jobPost.Company.Name;
-                JobPostVM.SelectedJob = jobPost.Job.Name;
-                JobPostVM.SelectedJobType = jobType.Name;
                 JobPostVM.SelectedCompany = jobPost.CompanyId.ToString();
                 JobPostVM.SelectedJob = jobPost.JobId.ToString();
                 JobPostVM.SelectedJobType = jobPost.JobTypeId.ToString();
@@ -75,18 +73,17 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
 
         }
         [HttpPost]
-        public IActionResult Upsert(JobPostVM JobPostVM, string tagNames)
+        public IActionResult Upsert(JobPostVM JobPostVM)
         {
             JobType existingJobType = new JobType();
-            //existingJobType = _unitOfWork.JobType.GetById(JobPostVM.SelectedJobTypes[0]);
             JobPostVM.JobPost.JobTypeId = int.Parse(JobPostVM.SelectedJobType);
             JobPostVM.JobPost.CompanyId = int.Parse(JobPostVM.SelectedCompany);
             JobPostVM.JobPost.JobId = int.Parse(JobPostVM.SelectedJob);
-            var tagNamesArray = tagNames.Split(", ");
+            var tagNamesArray = JobPostVM.tagIds;
             var selectedTags = new List<Tag>();
             foreach (var tagName in tagNamesArray)
             {
-                var existingTag = _unitOfWork.Tag.GetFirstOrDefaultTagName(tagName);
+                var existingTag = _unitOfWork.Tag.Get(filter: t => t.Id == tagName);
                 if (existingTag != null)
                 {
                     selectedTags.Add(existingTag);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using TuyenDungWeb.DataAccess.Repositories;
@@ -32,6 +33,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                 JobPosts = jobPosts,
                 JobPostExpireds = jobPostExpireds,
                 Companies = _unitOfWork.Company.GetAll().ToList(),
+                listTag = _unitOfWork.Tag.GetAll(includeProperties: "JobPosts,Companies").ToList(),
                 JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
@@ -209,7 +211,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
             return View();
         }
         [HttpPost]
-
+        [Route("TimKiemViecLam")]
         public IActionResult SearchJob(string searchInHome, JobPostVM jobPostVM)
         {
             List<JobPost> jobPostExpireds;
@@ -236,18 +238,22 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                 }
                 else if (int.Parse(jobPostVM.SelectedCareer) != 0)
                 {
-                    //get Company in career
-                    var companiesWithSelectedCareers = _unitOfWork.Company.GetAll()
-                        .Where(c => c.CompanyCareers.Any(cc => jobPostVM.SelectedCareer.Contains(cc.CareerId.ToString()))).ToList();
-                    foreach (var company in companiesWithSelectedCareers)
+                    var jobPostList = _unitOfWork.JobPost.GetAll(includeProperties: "Company,Job").OrderByDescending(u => u.CreatedDate).Where(u => u.EndDate >= DateTime.Now).ToList();
+                    var jobPostExpiredList = _unitOfWork.JobPost.GetAll(includeProperties: "Company,Job").OrderByDescending(u => u.CreatedDate).Where(u => u.EndDate < DateTime.Now).ToList();
+                    foreach (var jobPost in jobPostList)
                     {
-
+                        if (jobPost.Job.CareerId.ToString() == jobPostVM.SelectedCareer)
+                        {
+                            jobPosts.Add(jobPost);
+                        }
                     }
-                }
-                else
-                {
-                    jobPosts = jobPosts;
-                    jobPostExpireds = jobPostExpireds;
+                    foreach (var jobPost in jobPostExpiredList)
+                    {
+                        if (jobPost.Job.CareerId.ToString() == jobPostVM.SelectedCareer)
+                        {
+                            jobPostExpireds.Add(jobPost);
+                        }
+                    }
                 }
             }
             else
@@ -269,6 +275,29 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                     jobPosts = jobPosts.Where(u => u.JobTypeId == int.Parse(jobPostVM.SelectedJobType.ToString())).ToList();
                     jobPostExpireds = jobPostExpireds.Where(u => u.JobTypeId == int.Parse(jobPostVM.SelectedJobType.ToString())).ToList();
                 }
+                else if (int.Parse(jobPostVM.SelectedCareer.ToString()) != 0)
+                {
+                    var jobPostList = _unitOfWork.JobPost.GetAll(includeProperties: "Company,Job").OrderByDescending(u => u.CreatedDate).Where(u => u.EndDate >= DateTime.Now).ToList();
+                    var jobPostExpiredList = _unitOfWork.JobPost.GetAll(includeProperties: "Company,Job").OrderByDescending(u => u.CreatedDate).Where(u => u.EndDate < DateTime.Now).ToList();
+                    var jobPostTemp = new List<JobPost>();
+                    var jobPostExpiredTemp = new List<JobPost>();
+                    foreach (var jobPost in jobPostList)
+                    {
+                        if (jobPost.Job.CareerId.ToString() == jobPostVM.SelectedCareer.ToString())
+                        {
+                            jobPostTemp.Add(jobPost);
+                        }
+                    }
+                    foreach (var jobPost in jobPostExpiredList)
+                    {
+                        if (jobPost.Job.CareerId.ToString() == jobPostVM.SelectedCareer.ToString())
+                        {
+                            jobPostExpiredTemp.Add(jobPost);
+                        }
+                    }
+                    jobPosts = jobPostTemp;
+                    jobPostExpireds = jobPostExpiredTemp;
+                }
                 else
                 {
                     jobPosts = jobPosts;
@@ -282,12 +311,126 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                 JobPosts = jobPosts,
                 JobPostExpireds = jobPostExpireds,
                 Companies = _unitOfWork.Company.GetAll().ToList(),
+                listTag = _unitOfWork.Tag.GetAll(includeProperties: "JobPosts,Companies").ToList(),
                 JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
                 CompanyList = _unitOfWork.Company.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                CareerList = _unitOfWork.Career.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                SelectedCareer = jobPostVM.SelectedCareer,
+                SelectedCompany = jobPostVM.SelectedCompany,
+                SelectedJobType = jobPostVM.SelectedJobType,
+                JobTypes = _unitOfWork.JobType.GetAll().ToList(),
+                CompanyImages = _unitOfWork.CompanyImage.GetAll().ToList(),
+                WistList = wishList,
+            };
+            jobs.WishListVM = new List<WishListVM>();
+            jobs.WishListVMExprireds = new List<WishListVM>();
+            WishListVM wishListVM;
+            string userId;
+            if (User.Identity.Name != null)
+            {
+                userId = _unitOfWork.ApplicationUser.GetAll().FirstOrDefault(u => u.Email == User.Identity.Name).Id;
+            }
+            else
+            {
+                userId = null;
+            }
+            foreach (var item in jobs.JobPosts)
+            {
+                WishList wishListTemp;
+                wishListVM = new WishListVM();
+                if (userId != null)
+                {
+                    wishListTemp = jobs.WistList.FirstOrDefault(u => u.JobPostId == item.Id && u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    wishListTemp = null;
+                }
+                if (wishListTemp != null)
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = true;
+                }
+                else
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = false;
+                }
+                jobs.WishListVM.Add(wishListVM);
+            }
+            foreach (var item in jobs.JobPostExpireds)
+            {
+                WishList wishListTemp;
+                wishListVM = new WishListVM();
+                if (userId != null)
+                {
+                    wishListTemp = jobs.WistList.FirstOrDefault(u => u.JobPostId == item.Id && u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    wishListTemp = null;
+                }
+                if (wishListTemp != null)
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = true;
+                }
+                else
+                {
+                    wishListVM.JobPostId = item.Id;
+                    wishListVM.Added = false;
+                }
+                jobs.WishListVMExprireds.Add(wishListVM);
+            }
+            return View(jobs);
+        }
+        [Route("/SearchByTag/{tag}")]
+        public IActionResult SearchByTag(string tag)
+        {
+            var objTag = _unitOfWork.Tag.Get(filter: u => u.Name.Contains(tag) == true, includeProperties: "JobPosts,Companies");
+            var jobPosts = new List<JobPost>();
+            var jobPostExpireds = new List<JobPost>();
+            foreach (var item in objTag.JobPosts)
+            {
+                if (item.EndDate < DateTime.Now)
+                {
+                    jobPostExpireds.Add(item);
+                }
+                else
+                {
+                    jobPosts.Add(item);
+                }
+            }
+            var wishList = _unitOfWork.WishList.GetAll().ToList();
+            JobPostVM jobs = new()
+            {
+                JobPosts = jobPosts,
+                JobPostExpireds = jobPostExpireds,
+                Companies = _unitOfWork.Company.GetAll().ToList(),
+                listTag = _unitOfWork.Tag.GetAll(includeProperties: "JobPosts,Companies").ToList(),
+                JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                CompanyList = _unitOfWork.Company.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                CareerList = _unitOfWork.Career.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
@@ -358,7 +501,8 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
             }
             return View(jobs);
         }
-        //chat
+        [Route("/chat")]
+        [Authorize]
         public IActionResult Chat()
         {
             return View();

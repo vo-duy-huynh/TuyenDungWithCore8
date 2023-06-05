@@ -74,9 +74,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
             // Đã đăng nhập nên chuyển hướng về Index
-            if (_signInManager.IsSignedIn(User)) return Redirect("Index");
 
             if (ModelState.IsValid)
             {
@@ -101,28 +99,25 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                             Input.RememberMe,
                             true
                         );
+
                     }
                 }
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User đã đăng nhập");
-                    //if admin
-                    if (User.IsInRole(SD.Role_Admin))
+                    var user = await _userManager.FindByEmailAsync(Input.UserNameOrEmail);
+                    if (user != null)
                     {
-                        return ViewComponent(MessagePage.COMPONENTNAME, new MessagePage.Message()
+                        if (await _signInManager.UserManager.IsInRoleAsync(user, SD.Role_Admin))
                         {
-                            title = "Đã đăng nhập",
-                            htmlcontent = "Đăng nhập thành công",
-                            urlredirect = "/Admin/Home/Index"
-                        });
+                            returnUrl = returnUrl ?? Url.Content("~/admin/home/index");
+                        }
+                        else
+                        {
+                            returnUrl = returnUrl ?? Url.Content("~/");
+                        }
                     }
-                    //if employer
-                    if (User.IsInRole("Employer"))
-                    {
-                        return Redirect("/Employer/Home/Index");
-                    }
-
+                    _logger.LogInformation("User đã đăng nhập");
                     return ViewComponent(MessagePage.COMPONENTNAME, new MessagePage.Message()
                     {
                         title = "Đã đăng nhập",

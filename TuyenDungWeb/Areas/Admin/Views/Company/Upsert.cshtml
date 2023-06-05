@@ -46,9 +46,10 @@
                             <label asp-for="Company.CompanyImages" class="ms-2"></label>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.tagIds" asp-items="@Model.Tags" id="tagIds" multiple name="tagIds" placeholder="Chọn tag" data-search="true" data-silent-initial-value-set="true">
-                            </select>
-                            
+                            <select multiple class="selectpicker form-control" asp-for="@Model.tagIds"
+                                    asp-items="@Model.Tags" data-container="body" data-live-search="true"
+                                    title="Chọn ngành nghề" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                            <i></i>
                         </div>
                        
                         <div class="row pt-2">
@@ -103,35 +104,10 @@
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
         });
     </script>
-    <script src="~/assets/dist/virtual-select.min.js"></script>
-    <script type="text/javascript" >
-            VirtualSelect.init({
-            ele: '#tagIds'
-            });
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    </script>
-    <script>
-        localStorage.setItem('tagIds', document.querySelector('.vscomp-value').textContent);
-        document.getElementById("tagNames").value = localStorage.getItem('tagIds');
-        // Lấy phần tử div có lớp vscomp-value
-        var target = document.querySelector('.vscomp-value');
-
-        // Tạo một MutationObserver instance
-        var observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                // Lấy giá trị mới của phần tử div và lưu vào localStorage với key là "tagIds"
-                localStorage.setItem('tagIds', mutation.target.textContent);
-                //set value for input id="tagNames"
-                document.getElementById("tagNames").value = localStorage.getItem('tagIds');
-                //delete localStorage
-                localStorage.clear();
-            });
-        });
-
-         //Cấu hình và bắt đầu theo dõi phần tử
-        var config = { attributes: true, childList: true, characterData: true };
-        observer.observe(target, config);
-    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }

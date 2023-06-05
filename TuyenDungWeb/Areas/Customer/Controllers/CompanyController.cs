@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
+using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Customer.Controllers
 {
@@ -142,7 +143,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = SD.Role_Customer)]
         public IActionResult Comment(string name, string email, string rating, string comment, string companyIdInForm)
         {
             CompanyComment companyComment = new CompanyComment();
@@ -178,7 +179,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        [Authorize(Roles = SD.Role_Admin)]
         public IActionResult DeleteImage(int imageId)
         {
             var imageToBeDeleted = _unitOfWork.CompanyImage.Get(u => u.Id == imageId);

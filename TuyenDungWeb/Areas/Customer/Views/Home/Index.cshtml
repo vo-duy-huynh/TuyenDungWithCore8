@@ -44,32 +44,33 @@
 <div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
     <div class="container">
         <div class="row g-2">
-            <form action="~/Customer/Home/SearchJob" method="post">
-                <div class="col-md-10">
+            <form action="~/TimKiemViecLam" method="post">
+                <div class="col-md-12">
                     <div class="row g-2">
-                        <div class="col-md-4">
-                            <input type="text" id="searchInHome" name="searchInHome" class="form-control border-0" placeholder="Nhập vào việc làm, công ty, hoặc loại việc làm..." />
+                        <div class="col-md-3">
+                            <input type="text" id="searchInHome" name="searchInHome" class="form-control border-0" placeholder="Nhập vào việc làm, công ty..." />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <select asp-for="@Model.SelectedCompany" asp-items="@Model.CompanyList" class="form-select border-0 shadow">
                                 <option value="0" selected>Chọn công ty</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="form-select border-0 shadow">
-                                <option value="0" selected>Chọn loại công việc</option>
+                                <option value="0" selected>Chọn kiểu việc làm</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <select asp-for="@Model.SelectedCareer" asp-items="@Model.CareerList" class="form-select border-0 shadow">
                                 <option value="0" selected>Chọn ngành nghề</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-dark border-0 w-100">Tìm Kiếm</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-dark border-0 w-100">Tìm Kiếm</button>
-                </div>
+               
             </form>
         </div>
     </div>
@@ -269,7 +270,7 @@
                                         {
                                             <div class="d-flex mb-3">
                                                 <a class="btn btn-light btn-square me-3 wishlist-link" data-job-post-id="@jobpost.Id" href=""><i class="far fa-heart text-primary"></i></a>
-                                                <a class="btn btn-primary" href="/Customer/JobPost/Apply?id=@jobpost.Id">Ứng tuyển</a>
+                                                <a class="btn btn-primary apply-button" data-applyjobid="@jobpost.Id" href="/Customer/JobPost/Apply?id=@jobpost.Id">Ứng tuyển</a>
                                             </div>
                                         }
                                     }
@@ -360,7 +361,7 @@
                                         {
                                             <div class="d-flex mb-3">
                                                 <a class="btn btn-light btn-square me-3 wishlist-link" data-job-post-id="@jobpost.Id" href=""><i class="far fa-heart text-primary"></i></a>
-                                                <a class="btn btn-primary" href="/Customer/JobPost/Apply?id=@jobpost.Id">Ứng tuyển</a>
+                                                <a class="btn btn-primary apply-button" data-applyjobid="@jobpost.Id" href="/Customer/JobPost/Apply?id=@jobpost.Id">Ứng tuyển</a>
                                             </div>
                                         }
                                     }
@@ -433,4 +434,5 @@
 <!-- Testimonial End -->
 @section Scripts{
     <script src="~/js/phantrang.js"></script>
+    <script src="~/js/checkapply.js"></script>
 }

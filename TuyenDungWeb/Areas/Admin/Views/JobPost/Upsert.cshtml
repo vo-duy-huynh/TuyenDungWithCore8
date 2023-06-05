@@ -42,7 +42,7 @@
                             <span asp-validation-for="JobPost.NumberOfRecruiting" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <label asp-for="JobPost.Location" class="ms-2">Thanh phố</label>
+                            <label asp-for="JobPost.Location" class="ms-2">Thành phố</label>
                             <input asp-for="JobPost.Location" class="form-control border-0 shadow" />
                             <span asp-validation-for="JobPost.Location" class="text-danger"></span>
                         </div>
@@ -52,20 +52,21 @@
                             <span asp-validation-for="JobPost.EndDate" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="form-select border-0 shadow">
-                            </select>
-                            <label asp-for="SelectedJobType" class="ms-2">Chọn kiểu việc làm</label>
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedJobType"
+                                    asp-items="@Model.JobTypeList" data-container="body" data-live-search="true"
+                                    title="Chọn kiểu việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                             <span asp-validation-for="@Model.SelectedJobType" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedJob" asp-items="@Model.JobList" class="form-select border-0 shadow">
-                            </select>
-                            <label asp-for="SelectedJob" class="ms-2">Chọn việc làm</label>
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedJob"
+                                    asp-items="@Model.JobList" data-container="body" data-live-search="true"
+                                    title="Chọn việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                             <span asp-validation-for="@Model.SelectedJob" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <input asp-for="JobPost.Experience" class="form-control border-0 shadow" />
                             <label asp-for="JobPost.Experience" class="ms-2">Kinh nghiệm</label>
+                            <input asp-for="JobPost.Experience" class="form-control border-0 shadow" />
+                            
                             <span asp-validation-for="JobPost.Experience" class="text-danger"></span>
                         </div>
 
@@ -75,21 +76,22 @@
                             <span asp-validation-for="JobPost.Salary" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPost.Gender" class="ms-2">Giới tính</label>
                             <input asp-for="JobPost.Gender" class="form-control border-0 shadow" />
-                            <label asp-for="JobPost.Gender" class="ms-2"></label>
+                           
                             <span asp-validation-for="JobPost.Gender" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.tagIds" asp-items="@Model.Tags" id="tagIds" multiple name="tagIds" placeholder="Chọn tag" data-search="true" data-silent-initial-value-set="true">
-                            </select>
-
+                            <select multiple class="selectpicker form-control" asp-for="@Model.tagIds"
+                                    asp-items="@Model.Tags" data-container="body" data-live-search="true"
+                                    title="Chọn thẻ" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                         </div>
                         @if (User.IsInRole(SD.Role_Admin))
                         {
                             <div class="form-floating py-2 col-12">
-                                <select asp-for="@Model.SelectedCompany" asp-items="@Model.CompanyList" class="form-select border-0 shadow">
-                                </select>
-                                <label asp-for="SelectedCompany" class="ms-2">Chọn công ty</label>
+                                <select class="selectpicker form-control" asp-for="@Model.SelectedCompany"
+                                        asp-items="@Model.CompanyList" data-container="body" data-live-search="true"
+                                        title="Chọn công ty" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                                 <span asp-validation-for="@Model.SelectedCompany" class="text-danger"></span>
                             </div>
                         }
@@ -128,37 +130,10 @@
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
         });
     </script>
-    <script src="~/assets/dist/virtual-select.min.js"></script>
-    <script type="text/javascript">
-        VirtualSelect.init({
-            ele: '#tagIds'
-        });
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    </script>
-    <script>
-        // gán giá trị khi bắt đầu
-        localStorage.setItem('tagId', document.querySelector('.vscomp-value').textContent);
-        document.getElementById("tagNames").value = localStorage.getItem('tagId');
-
-        // Lấy phần tử div có lớp vscomp-value
-        var target = document.querySelector('.vscomp-value');
-
-        // Tạo một MutationObserver instance
-        var observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                // Lấy giá trị mới của phần tử div và lưu vào localStorage với key là "tagIds"
-                localStorage.setItem('tagId', mutation.target.textContent);
-                //set value for input id="tagNames"
-                document.getElementById("tagNames").value = localStorage.getItem('tagId');
-                //delete localStorage
-                localStorage.clear();
-            });
-        });
-
-        //Cấu hình và bắt đầu theo dõi phần tử
-        var config = { attributes: true, childList: true, characterData: true };
-        observer.observe(target, config);
-    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }

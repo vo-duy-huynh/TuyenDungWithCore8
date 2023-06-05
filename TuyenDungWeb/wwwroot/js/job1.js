@@ -8,8 +8,9 @@ function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": { url: '/admin/job/getall' },
         "columns": [
-            { "data": "name", "width": "30%" },
-            { "data": "note", "width": "30%" },
+            { "data": "name", "width": "25%" },
+            { "data": "note", "width": "25%" },
+            { "data": "career.name", "width": "25%" },
             {
                 data: 'id',
                 "render": function (data, type, row, meta) {

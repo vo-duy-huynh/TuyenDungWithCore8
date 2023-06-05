@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Data
@@ -29,6 +30,8 @@ namespace TuyenDungWeb.DataAccess.Data
         public DbSet<CompanyImage> CompanyImages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ProfileHeader> ProfileHeaders { get; set; }
+        public DbSet<MessageChat> MessageChats { get; set; }
+        public DbSet<Room> Rooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,7 +61,7 @@ namespace TuyenDungWeb.DataAccess.Data
                 new Company { Id = 3, Name = "Vietcombank", Location = "123 Hải Thượng Lãn Ông, Đà Nẵng", Content = "No", PhoneNumber = "0987654321", CompanyEmail = "viecombank@gmail.com" }
                 );
 
-
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         }
     }

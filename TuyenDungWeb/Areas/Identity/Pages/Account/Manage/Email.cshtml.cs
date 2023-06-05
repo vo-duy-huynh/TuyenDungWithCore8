@@ -27,6 +27,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _signInManager = signInManager;
             //_emailSender = emailSender;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -125,7 +126,9 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
                 //    Input.NewEmail,
                 //    "Confirm your email",
                 //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                TempData["success"] = "Đường dẫn xác nhận đã được gửi hãy kiểm tra trong email.";
+                var messageEmail = new TuyenDungWeb.Models.Message(new string[] { Input.NewEmail }, "Xác nhận email", $"Hãy xác nhận email bằng cách bấm vào <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>đây nhé!</a>");
+                _emailSender.SendEmail(messageEmail);
                 StatusMessage = "Đường dẫn xác nhận đã được gửi hãy kiểm tra trong email.";
                 return RedirectToPage();
             }

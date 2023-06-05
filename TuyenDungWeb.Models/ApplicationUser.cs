@@ -16,6 +16,9 @@ namespace TuyenDungWeb.Models
         [ForeignKey("CompanyId")]
         [ValidateNever]
         public Company? Company { get; set; }
+        public string Avatar { get; set; }
+        public ICollection<Room> Rooms { get; set; }
+        public ICollection<MessageChat> MessageChats { get; set; }
         [NotMapped]
         public string Role { get; set; }
     }

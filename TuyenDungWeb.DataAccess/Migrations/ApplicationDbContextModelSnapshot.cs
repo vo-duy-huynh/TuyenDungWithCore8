@@ -443,6 +443,9 @@ namespace TuyenDungWeb.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CareerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -450,6 +453,8 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CareerId");
 
                     b.ToTable("Jobs");
 
@@ -734,6 +739,37 @@ namespace TuyenDungWeb.DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.MessageChat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FromUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ToRoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("ToRoomId");
+
+                    b.ToTable("MessageChats", (string)null);
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -826,6 +862,30 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.ToTable("ProfileHeaders");
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.ToTable("Rooms", (string)null);
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -908,6 +968,10 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CompanyId")
@@ -1055,6 +1119,15 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.Job", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.Career", "Career")
+                        .WithMany()
+                        .HasForeignKey("CareerId");
+
+                    b.Navigation("Career");
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.JobPost", b =>
                 {
                     b.HasOne("TuyenDungWeb.Models.Company", "Company")
@@ -1104,6 +1177,23 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("JobPost");
                 });
 
+            modelBuilder.Entity("TuyenDungWeb.Models.MessageChat", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.ApplicationUser", "FromUser")
+                        .WithMany("MessageChats")
+                        .HasForeignKey("FromUserId");
+
+                    b.HasOne("TuyenDungWeb.Models.Room", "ToRoom")
+                        .WithMany("MessageChats")
+                        .HasForeignKey("ToRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("ToRoom");
+                });
+
             modelBuilder.Entity("TuyenDungWeb.Models.ProfileHeader", b =>
                 {
                     b.HasOne("TuyenDungWeb.Models.ApplicationUser", "ApplicationUser")
@@ -1121,6 +1211,17 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("JobPost");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.Room", b =>
+                {
+                    b.HasOne("TuyenDungWeb.Models.ApplicationUser", "Admin")
+                        .WithMany("Rooms")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("TuyenDungWeb.Models.WishList", b =>
@@ -1153,6 +1254,18 @@ namespace TuyenDungWeb.DataAccess.Migrations
                     b.Navigation("CompanyCareers");
 
                     b.Navigation("CompanyImages");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.Room", b =>
+                {
+                    b.Navigation("MessageChats");
+                });
+
+            modelBuilder.Entity("TuyenDungWeb.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("MessageChats");
+
+                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

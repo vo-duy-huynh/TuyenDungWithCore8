@@ -167,7 +167,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var careerIdsArray = Input.careerIds;
+
                 var user = CreateUser();
                 user.FullName = Input.FullName;
                 user.Address = Input.Address;
@@ -179,7 +179,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 TuyenDungWeb.Models.Company companyNew = new Models.Company();
                 if (Input.Role == SD.Role_Company)
                 {
-
+                    var careerIdsArray = Input.careerIds;
                     companyNew.CompanyEmail = Input.Email;
                     companyNew.Name = Input.FullName;
                     companyNew.Location = Input.Address;
@@ -210,10 +210,13 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    user.CompanyId = companyNew.Id;
-                    user.Company = companyNew;
-                    await _userManager.UpdateAsync(user);
-                    TempData["Success"] = "Đăng kí thành công, chờ quản trị xác nhận nhé!";
+                    if (Input.Role == SD.Role_Company)
+                    {
+                        user.CompanyId = companyNew.Id;
+                        user.Company = companyNew;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    TempData["Success"] = "Đăng kí thành công!!!";
                     var messageEmail = new TuyenDungWeb.Models.Message(new string[] { Input.Email }, "Đăng kí thành công", $"Tài Khoản: {Input.Email}, Mật khẩu: {Input.Password} Hãy khám phá website nhé!!!.");
                     _emailService.SendEmail(messageEmail);
                     if (!String.IsNullOrEmpty(Input.Role))

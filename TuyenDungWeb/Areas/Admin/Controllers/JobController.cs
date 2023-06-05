@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
+using TuyenDungWeb.Models.ViewModels;
 using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Admin.Controllers
@@ -18,14 +20,23 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            return View(_unitOfWork.Job.GetAll());
+            JobVM jobVM = new JobVM()
+            {
+                jobs = _unitOfWork.Job.GetAll(includeProperties: "Career").ToList(),
+                CareeList = _unitOfWork.Career.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+            return View(jobVM);
         }
         public IActionResult Create()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Create(string Name, string Note)
+        public IActionResult Create(string Name, string Note, string CareerId)
         {
             if (Note == null)
             {
@@ -34,6 +45,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             Job job = new Job();
             job.Name = Name;
             job.Note = Note;
+            job.CareerId = int.Parse(CareerId);
             if (Name == null)
             {
                 TempData["error"] = "Lỗi";
@@ -66,7 +78,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             return View(JobFromDb);
         }
         [HttpPost]
-        public IActionResult Edit(string editId, string editName, string editNote)
+        public IActionResult Edit(string editId, string editName, string editNote, string editCareerId)
         {
             if (editNote == null)
             {
@@ -77,7 +89,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             {
                 obj.Name = editName;
                 obj.Note = editNote;
-
+                obj.CareerId = int.Parse(editCareerId);
             }
 
             _unitOfWork.Job.Update(obj);
@@ -88,7 +100,7 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Job> objJobList = _unitOfWork.Job.GetAll().ToList();
+            List<Job> objJobList = _unitOfWork.Job.GetAll(includeProperties: "Career").ToList();
             return Json(new { data = objJobList });
         }
         [HttpDelete]

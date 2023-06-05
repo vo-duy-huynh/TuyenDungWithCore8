@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using TuyenDungWeb.DataAccess.Repositories;
@@ -9,7 +10,7 @@ using TuyenDungWeb.Models.ViewModels;
 namespace TuyenDungWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize]
     public class JobPostTempController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -31,20 +32,30 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
+            List<int> tagIds = new List<int>();
             JobPostVM JobPostVM = new()
             {
-                JobList = _unitOfWork.Job.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                }),
                 JobTypeList = _unitOfWork.JobType.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
-                JobPostTemp = _unitOfWork.JobPostTemp.GetById(id),
-                JobPost = new JobPost()
+                CompanyList = _unitOfWork.Company.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                JobList = _unitOfWork.Job.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                Tags = _unitOfWork.Tag.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                JobPost = new JobPost(),
             };
 
             if (id == null || id == 0)
@@ -54,7 +65,11 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             }
             else
             {
-                JobPostVM.SelectedJobType = JobPostVM.JobPostTemp.JobTypeId.ToString();
+                var jobPost = _unitOfWork.JobPostTemp.Get(filter: j => j.Id == id);
+                JobPostVM.JobPostTemp = jobPost;
+                JobPostVM.SelectedCompany = jobPost.CompanyId.ToString();
+                JobPostVM.SelectedJob = jobPost.JobId.ToString();
+                JobPostVM.SelectedJobType = jobPost.JobTypeId.ToString();
                 return View(JobPostVM);
             }
 
@@ -98,6 +113,12 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
             }
             else
             {
+                var tagIdsArray = JobPostVM.tagIds;
+                foreach (var tagId in tagIdsArray)
+                {
+                    var tag = _unitOfWork.Tag.Get(filter: t => t.Id == tagId);
+                    JobPostVM.JobPost.Tags.Add(tag);
+                }
                 _unitOfWork.JobPost.Update(JobPostVM.JobPost);
                 _unitOfWork.Save();
             }

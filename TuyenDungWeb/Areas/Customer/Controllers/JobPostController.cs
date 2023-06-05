@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
+using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize(Roles = SD.Role_Customer)]
     public class JobPostController : Controller
     {
         private readonly NotificationService _notificationService;
@@ -37,64 +40,63 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //add mutipart file cv and cover letter for apply http post
         public IActionResult Apply(JobPostVM jobPostVM, IFormFile cv, IFormFile coverLetter)
         {
             string wwwRootPath = _webHostEnvironment.WebRootPath;
             if (cv != null && cv.Length > 0)
             {
                 var jobPost = _unitOfWork.JobPost.Get(filter: u => u.Id == jobPostVM.ProfileHeader.JobPostId);
-                //check enddate and number of recruiting
+                string cvFileName = Guid.NewGuid().ToString() + Path.GetExtension(cv.FileName);
+                string CVPath = @"cvs\";
+                string finalPath = Path.Combine(wwwRootPath, CVPath);
+
+                if (!Directory.Exists(finalPath))
+                    Directory.CreateDirectory(finalPath);
+
+                using (var fileStream = new FileStream(Path.Combine(finalPath, cvFileName), FileMode.Create))
+                {
+                    cv.CopyTo(fileStream);
+                }
+                var profileHeader = new ProfileHeader
+                {
+                    JobPostId = jobPostVM.ProfileHeader.JobPostId,
+                    Name = jobPostVM.ProfileHeader.Name,
+                    Email = jobPostVM.ProfileHeader.Email,
+                    PhoneNumber = jobPostVM.ProfileHeader.PhoneNumber,
+                    CV = @"\" + CVPath + @"\" + cvFileName,
+                    ApplyDate = DateTime.Now,
+                    Status = "Pending",
+                    ApplicationUserId = jobPostVM.ProfileHeader.ApplicationUserId,
+                    City = jobPostVM.ProfileHeader.City,
+                    UserReceiveId = jobPostVM.ProfileHeader.UserReceiveId,
+                    JobTitle = _unitOfWork.JobPost.Get(filter: u => u.Id == jobPostVM.ProfileHeader.JobPostId).Heading,
+                };
+
+                if (coverLetter != null && coverLetter.Length > 0)
+                {
+                    var coverLetterFileName = Guid.NewGuid().ToString() + Path.GetExtension(coverLetter.FileName);
+                    string CoverLetterPath = @"letters\";
+                    var coverLetterFilePath = Path.Combine(wwwRootPath, CoverLetterPath);
+                    if (!Directory.Exists(coverLetterFilePath))
+                        Directory.CreateDirectory(coverLetterFilePath);
+                    using (var stream = new FileStream(Path.Combine(coverLetterFilePath, coverLetterFileName), FileMode.Create))
+                    {
+                        coverLetter.CopyTo(stream);
+                    }
+                    profileHeader.CoverLetter = @"\" + CoverLetterPath + @"\" + coverLetterFileName;
+                }
+
+                _unitOfWork.ProfileHeader.Add(profileHeader);
+                _unitOfWork.Save();
+                _notificationService.CreateNotificationForCompany(jobPostVM.ProfileHeader.UserReceiveId);
                 if (jobPost.EndDate < DateTime.Now || jobPost.NumberOfRecruiting <= 0)
                 {
-                    TempData["error"] = "Hết hạn tuyển dụng hoặc số lượng tuyển dụng đã đủ";
+                    TempData["error"] = "Lưu ý: đã hết hạn tuyển dụng hoặc số lượng tuyển dụng đã đủ";
                     return RedirectToAction("Index", "Home", new { area = "Customer" });
                 }
                 else
                 {
-                    string cvFileName = Guid.NewGuid().ToString() + Path.GetExtension(cv.FileName);
-                    string CVPath = @"cvs\";
-                    string finalPath = Path.Combine(wwwRootPath, CVPath);
 
-                    if (!Directory.Exists(finalPath))
-                        Directory.CreateDirectory(finalPath);
-
-                    using (var fileStream = new FileStream(Path.Combine(finalPath, cvFileName), FileMode.Create))
-                    {
-                        cv.CopyTo(fileStream);
-                    }
-                    var profileHeader = new ProfileHeader
-                    {
-                        JobPostId = jobPostVM.ProfileHeader.JobPostId,
-                        Name = jobPostVM.ProfileHeader.Name,
-                        Email = jobPostVM.ProfileHeader.Email,
-                        PhoneNumber = jobPostVM.ProfileHeader.PhoneNumber,
-                        CV = @"\" + CVPath + @"\" + cvFileName,
-                        ApplyDate = DateTime.Now,
-                        Status = "Pending",
-                        ApplicationUserId = jobPostVM.ProfileHeader.ApplicationUserId,
-                        City = jobPostVM.ProfileHeader.City,
-                        UserReceiveId = jobPostVM.ProfileHeader.UserReceiveId,
-                        JobTitle = _unitOfWork.JobPost.Get(filter: u => u.Id == jobPostVM.ProfileHeader.JobPostId).Heading,
-                    };
-
-                    if (coverLetter != null && coverLetter.Length > 0)
-                    {
-                        var coverLetterFileName = Guid.NewGuid().ToString() + Path.GetExtension(coverLetter.FileName);
-                        string CoverLetterPath = @"letters\";
-                        var coverLetterFilePath = Path.Combine(wwwRootPath, CoverLetterPath);
-                        if (!Directory.Exists(coverLetterFilePath))
-                            Directory.CreateDirectory(coverLetterFilePath);
-                        using (var stream = new FileStream(Path.Combine(coverLetterFilePath, coverLetterFileName), FileMode.Create))
-                        {
-                            coverLetter.CopyTo(stream);
-                        }
-                        profileHeader.CoverLetter = @"\" + CoverLetterPath + @"\" + coverLetterFileName;
-                    }
-
-                    _unitOfWork.ProfileHeader.Add(profileHeader);
-                    _unitOfWork.Save();
-                    _notificationService.CreateNotificationForCompany(jobPostVM.ProfileHeader.UserReceiveId);
                     TempData["Success"] = "Ứng tuyển thành công, chờ công ty xác nhận nhé!!";
                     return RedirectToAction("Index", "Home", new { area = "Customer" });
                 }
@@ -117,7 +119,17 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                 return View(jobPostVM2);
             }
         }
-
+        [HttpPost]
+        public IActionResult Check(int jobId)
+        {
+            var jobPost = _unitOfWork.JobPost.Get(filter: u => u.Id == jobId);
+            if (jobPost.EndDate < DateTime.Now || jobPost.NumberOfRecruiting <= 0)
+            {
+                string errorMessage = "Hết hạn tuyển dụng hoặc số lượng tuyển dụng đã đủ";
+                return Json(new { isExpired = true, isRecruitingFull = true, errorMessage });
+            }
+            return Json(new { isExpired = false, isRecruitingFull = false });
+        }
 
     }
 }

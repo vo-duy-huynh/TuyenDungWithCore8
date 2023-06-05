@@ -8,22 +8,61 @@
 <h3>Hồ sơ của bạn</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
+        <form id="profile-form" method="post" style="display: flex;" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label">Tên người dùng</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
-                <label asp-for="Input.PhoneNumber" class="form-label">Số điện thoại</label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                    <label asp-for="Username" class="form-label">Tên người dùng</label>
+                </div>
+                <div class="form-floating">
+                    <input asp-for="@Model.Input.FullName" class="form-control" placeholder="Hãy nhập họ tên."  />
+                    <label asp-for="@Model.Input.FullName" class="form-label">Họ tên</label>
+                    <span asp-validation-for="@Model.Input.FullName" class="text-danger"></span>
+                </div>
+                @if (Model.Input.Company != null)
+                {
+                    <div class="form-floating">
+                        <input asp-for="@Model.Input.Company" class="form-control" placeholder="Hãy nhập tên công ty." disabled/>
+                        <label asp-for="@Model.Input.Company" class="form-label">Công ty</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-floating">
+                        <input asp-for="@Model.Input.Role" class="form-control"  disabled/>
+                        <label asp-for="@Model.Input.Role" class="form-label">Vai trò</label>
+                    </div>
+                }
+                <div class="form-floating">
+                    <input asp-for="@Model.Input.Address" class="form-control" placeholder="Hãy nhập địa chỉ." />
+                    <label asp-for="@Model.Input.Address" class="form-label">Địa chỉ</label>
+                </div>
+                
+                <div class="form-floating">
+                    <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Nhập vào số điện thoại." />
+                    <label asp-for="Input.PhoneNumber" class="form-label">Số điện thoại</label>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                </div>
 
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Cập nhật</button>
+                <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Cập nhật</button>
+            
+            </div>
+            <div class="col-5">
+                @if (Model.Input.Avatar != null)
+                {
+                    <img src="@Model.Input.Avatar" class="img-thumbnail" style="width: 150px;height: 150px;"/>
+                }
+                else
+                {
+                <img src="\images\avatars\defaultavatar.png" class="img-thumbnail" style="width: 150px;height: 150px;" />
+                }
+                <div class="form-floating">
+                <input type="file" id="file" name="file" class="form-control" />
+                    <label asp-for="Input.Avatar" class="form-label">Ảnh đại diện</label>
+                </div>
+            </div>
         </form>
-    </div>
 </div>
 
 @section Scripts {

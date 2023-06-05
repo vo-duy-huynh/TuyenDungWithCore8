@@ -17,7 +17,14 @@
             <input asp-for="JobPostTemp.Message" hidden />
             <input asp-for="JobPostTemp.UserIdSend" hidden />
                     <div class="border p-3">
-                        @*<div asp-validation-summary="ModelOnly"></div>*@
+
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="form-floating py-2 col-12">
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedCompany"
+                                    asp-items="@Model.CompanyList" data-container="body" data-live-search="true"
+                                    title="Chọn công ty" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true" disabled></select>
+                            <span asp-validation-for="@Model.SelectedCompany" class="text-danger"></span>
+                        </div>
                         <div class="form-floating py-2 col-12">
                              <label asp-for="JobPostTemp.Heading" class="ms-2">Tiêu đề</label>
                             <input asp-for="JobPostTemp.Heading" class="form-control border-0 shadow" />
@@ -49,16 +56,20 @@
                             <span asp-validation-for="JobPostTemp.Location" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="form-select border-0 shadow">
+                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="selectpicker form-control"
+                                data-container="body" data-live-search="true"
+                                title="Chọn kiểu việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true">
                             </select>
-                            <label asp-for="SelectedJobType" class="ms-2">Chọn kiểu việc làm</label>
-                            <span asp-validation-for="SelectedJob" class="text-danger"></span>
                         </div>
                         <div class="form-floating py-2 col-12">
-                            <select asp-for="@Model.SelectedJob" asp-items="@Model.JobList" class="form-select border-0 shadow">
-                            </select>
-                            <label asp-for="SelectedJob" class="ms-2">Chọn việc làm</label>
-                            <span asp-validation-for="SelectedJob" class="text-danger"></span>
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedJob"
+                            asp-items="@Model.JobList" data-container="body" data-live-search="true"
+                            title="Chọn việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select multiple class="selectpicker form-control" asp-for="@Model.tagIds"
+                            asp-items="@Model.Tags" data-container="body" data-live-search="true"
+                            title="Chọn ngành nghề" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
                         </div>
                         <div class="form-floating py-2 col-12">
                             <label asp-for="JobPostTemp.Experience" class="ms-2">Kinh nghiệm</label>
@@ -91,6 +102,7 @@
                             <input asp-for="JobPostTemp.Gender" class="form-control border-0 shadow" />
                             <span asp-validation-for="JobPostTemp.Gender" class="text-danger"></span>
                         </div>
+
                         <div class="row pt-2">
                             <div class="col-6 col-md-3">
                                 @if (Model.JobPostTemp.Id != 0)
@@ -126,6 +138,10 @@
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }

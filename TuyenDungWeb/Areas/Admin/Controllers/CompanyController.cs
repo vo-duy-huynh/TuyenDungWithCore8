@@ -60,14 +60,14 @@ namespace TuyenDungWeb.Areas.Admin.Controllers
 
         }
         [HttpPost]
-        public IActionResult Upsert(CompanyVM CompanyVM, List<IFormFile> files, string tagNames)
+        public IActionResult Upsert(CompanyVM CompanyVM, List<IFormFile> files)
         {
             //split tagNames into array of tag names and add to database
-            var tagNamesArray = tagNames.Split(", ");
+            var tagIdsArray = CompanyVM.tagIds;
             var selectedTags = new List<Tag>();
-            foreach (var tagName in tagNamesArray)
+            foreach (var tagId in tagIdsArray)
             {
-                var existingTag = _unitOfWork.Tag.GetFirstOrDefaultTagName(tagName);
+                var existingTag = _unitOfWork.Tag.Get(filter: t => t.Id == tagId);
                 if (existingTag != null)
                 {
                     selectedTags.Add(existingTag);

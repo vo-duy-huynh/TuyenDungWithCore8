@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories;
+using TuyenDungWeb.Models;
 using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.DataAccess.Notification
@@ -15,14 +16,23 @@ namespace TuyenDungWeb.DataAccess.Notification
             _dbContext = dbContext;
             _notificationService = notificationService;
         }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            ConnectedUsers.myConnectedUsers.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+
         public async Task SendMessage(string user, string message)
         {
-            //get fullname
-            string? fullName = _dbContext.ApplicationUsers.FirstOrDefault(n => n.Id == user)?.FullName;
-            await Clients.All.SendAsync("ReceiveMessage", fullName, message);
+            //if (string.IsNullOrEmpty(user))
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            //else
+            //    await Clients.Client(user).SendAsync("ReceiveMessage", user, message);
         }
         public override async Task OnConnectedAsync()
         {
+            ConnectedUsers.myConnectedUsers.Add(Context.ConnectionId);
             var adminUser = Context.User;
             if (adminUser != null && adminUser.Identity != null && adminUser.Identity.IsAuthenticated && adminUser.IsInRole(SD.Role_Admin))
             {

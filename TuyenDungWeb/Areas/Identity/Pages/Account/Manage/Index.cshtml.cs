@@ -2,13 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
+using TuyenDungWeb.DataAccess.Data;
+using TuyenDungWeb.DataAccess.Repositories.IRepository;
 
 namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
 {
@@ -16,13 +15,23 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ApplicationDbContext _context;
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IUnitOfWork unitOfWork,
+            IWebHostEnvironment webHostEnvironment,
+            ApplicationDbContext context
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         /// <summary>
@@ -56,21 +65,58 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "SĐT")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Ảnh đại diện")]
+            public string Avatar { get; set; }
+            [Required(ErrorMessage = "Vui lòng nhập họ tên")]
+            [Display(Name = "Họ tên")]
+            public string FullName { get; set; }
+
+            [Display(Name = "Địa chỉ")]
+            public string Address { get; set; }
+            [Display(Name = "Vai trò")]
+            public string Role { get; set; }
+            [Display(Name = "Công ty")]
+            public string Company { get; set; }
+
         }
 
         private async Task LoadAsync(IdentityUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
+            var avatar = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").Avatar;
+            var fullName = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").FullName;
+            var address = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").Address;
+            var role = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == user.Id))
+                    .GetAwaiter().GetResult().FirstOrDefault();
+            var company = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").Company;
             Username = userName;
 
-            Input = new InputModel
+            Input = new InputModel();
+            if (company != null)
             {
-                PhoneNumber = phoneNumber
-            };
+                Input.Company = company.Name;
+            }
+            if (role != null)
+            {
+                Input.Role = role;
+            }
+            if (avatar != null)
+            {
+                Input.Avatar = avatar;
+            }
+            if (fullName != null)
+            {
+                Input.FullName = fullName;
+            }
+            if (address != null)
+            {
+                Input.Address = address;
+            }
+            Input.PhoneNumber = phoneNumber;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -85,7 +131,7 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile file)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -100,18 +146,51 @@ namespace TuyenDungWeb.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var avatar = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").Avatar;
+            var fullName = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").FullName;
+            var address = _unitOfWork.ApplicationUser.Get(filter: u => u.Id == user.Id, includeProperties: "Company").Address;
             if (Input.PhoneNumber != phoneNumber)
             {
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
+                    StatusMessage = "Lỗi trong khi cập nhật số điện thoại.";
                     return RedirectToPage();
                 }
             }
+            if (Input.Address != address || Input.FullName != fullName || file != null)
+            {
+                var appUser = _context.ApplicationUsers.Where(u => u.Id == user.Id).FirstOrDefault();
+                if (Input.Address != null)
+                {
+                    appUser.Address = Input.Address;
+                }
+                if (Input.FullName != null)
+                {
+                    appUser.FullName = Input.FullName;
+                }
 
+                if (file != null && file.Length > 0)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string avatarPath = @"images\avatars\";
+                    string finalPath = Path.Combine(wwwRootPath, avatarPath);
+
+                    if (!Directory.Exists(finalPath))
+                        Directory.CreateDirectory(finalPath);
+
+                    using (var fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    appUser.Avatar = @"\" + avatarPath + @"\" + fileName;
+                }
+                await _context.SaveChangesAsync();
+            }
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Hồ sơ đã được cập nhật";
             return RedirectToPage();
         }
     }

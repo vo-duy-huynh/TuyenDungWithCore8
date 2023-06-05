@@ -1,0 +1,40 @@
+﻿<style>
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 5px 0 0 0;
+        padding: 5px 0 0 0;
+        list-style: none;
+    }
+
+    .tagInFooter {
+        margin: 0 5px 5px 0;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #eee;
+        color: #333;
+        font-size: 14px;
+        cursor: pointer;
+    }
+</style>
+<div class="tag-list"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/api/Tag',
+            type: 'GET',
+            success: function (data) {
+                var tags = data;
+                var tagList = $('.tag-list');
+
+                for (var i = 0; i < tags.length; i++) {
+                    var tag = tags[i];
+                    var tagLink = $('<a>').attr('href', '/SearchByTag/' + tag.name).addClass('tagInFooter').text(tag.displayName);
+                    tagList.append(tagLink);
+                }
+            }
+        });
+    });
+</script>

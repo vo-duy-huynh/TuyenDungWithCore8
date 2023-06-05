@@ -79,6 +79,8 @@ color: #ffffff;
 .btn-lg-square {
     width: 48px;
     height: 48px;
+    right: 11px;
+    bottom: 80px;
 }
 
 .btn-square,

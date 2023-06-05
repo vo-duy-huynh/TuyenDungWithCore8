@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
 using TuyenDungWeb.Models;
 using TuyenDungWeb.Models.ViewModels;
+using TuyenDungWeb.Utility;
 
 namespace TuyenDungWeb.Areas.Company.Controllers
 {
@@ -88,9 +90,9 @@ namespace TuyenDungWeb.Areas.Company.Controllers
             return View(jobs);
 
         }
+        [Authorize(Roles = SD.Role_Company)]
         public IActionResult Upsert(int? id)
         {
-            //get iduser
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userInCompany = _unitOfWork.ApplicationUser.GetCompanyId(userId);
             int? companyId = userInCompany.CompanyId;
@@ -121,6 +123,7 @@ namespace TuyenDungWeb.Areas.Company.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = SD.Role_Company)]
         public IActionResult Upsert(JobPostVM JobPostVM, string CompanyId)
         {
             JobPostVM.JobPostTemp.JobTypeId = int.Parse(JobPostVM.SelectedJobType.ToString());
