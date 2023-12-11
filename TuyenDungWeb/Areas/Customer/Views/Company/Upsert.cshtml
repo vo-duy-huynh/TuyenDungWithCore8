@@ -1,0 +1,113 @@
+﻿@model CompanyVM
+@{
+    ViewData["Title"] = "Công ty";
+}
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2"> @(Model.Company.Id != 0 ? "Update" : "Create") Company</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="Company.Id" hidden />
+
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Company.Name" class="form-control border-0 shadow" />
+                            <label asp-for="Company.Name" class="ms-2"></label>
+                            <span asp-validation-for="Company.Name" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="Company.Content" class="ms-2 text-muted"></label>
+                            <textarea asp-for="Company.Content" class="form-control border-0 shadow"></textarea>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Company.CompanyEmail" class="form-control border-0 shadow" />
+                            <label asp-for="Company.CompanyEmail" class="ms-2"></label>
+                            <span asp-validation-for="Company.CompanyEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Company.PhoneNumber" class="form-control border-0 shadow" />
+                            <label asp-for="Company.PhoneNumber" class="ms-2"></label>
+                            <span asp-validation-for="Company.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Company.Location" class="form-control border-0 shadow" />
+                            <label asp-for="Company.Location" class="ms-2"></label>
+                            <span asp-validation-for="Company.Location" class="text-danger"></span>
+                        </div>
+
+                        @*<div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedTags" asp-items="@Model.Tags" class="form-select border-0 shadow">
+                            </select>
+                            <label asp-for="Company.Tags" class="ms-2">Chọn tag</label>
+                            <span asp-validation-for="Company.Tags" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-floating py-2 col-12">
+                            <input type="file" name="files" class="form-control border-0 shadow" multiple />
+                            <label asp-for="Company.CompanyImages" class="ms-2"></label>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.Company.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Company" asp-action="Index" class="btn btn-outline-primary border  form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-2">
+                    @if (Model.Company.CompanyImages != null)
+                    {
+                        foreach (var image in Model.Company.CompanyImages)
+                        {
+                            <div class="border p-1 m-2 text-center">
+                                <img src="@image.ImageUrl" width="100%"
+                                     style="border-radius:5px; border:1px solid #bbb9b9" />
+                                <a asp-action="DeleteImage" class="btn btn-danger" asp-route-imageId="@image.Id">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons  lists   table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

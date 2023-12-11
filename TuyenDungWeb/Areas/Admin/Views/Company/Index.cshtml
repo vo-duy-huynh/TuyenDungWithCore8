@@ -1,0 +1,50 @@
+﻿@model List<Company>
+@{
+    ViewBag.Title = "Quản lý Công Ty";
+}
+<div class="content-header pt-5">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewBag.Title</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="card shadow border-0 my-4">
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary float-right">
+                    <i class="bi bi-plus-circle"></i>  Tạo mới
+                </a>
+            </div>
+        </div>
+
+        <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Điện thoại</th>
+                    <th>Vị trí</th>
+                    <th></th>
+                </tr>
+            </thead>
+            
+        </table>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/company.js"></script>
+}

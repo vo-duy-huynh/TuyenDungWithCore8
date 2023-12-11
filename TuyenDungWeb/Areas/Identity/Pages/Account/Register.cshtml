@@ -1,0 +1,196 @@
+﻿@page
+@using TuyenDungWeb.Utility;
+@model RegisterModel
+<div class="bodyForm">
+    <div class="boxRegister">
+        <span class="borderLineRegister"></span>
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="login-regis__form">
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <h2>Đăng ký dành cho quản trị</h2>
+            }
+            else
+            {
+                <h2>Đăng Ký</h2>
+            }
+            <div class="left">
+                <div class="inputBox">
+                    <input asp-for="Input.Email" autocomplete="username" required="required" type="text">
+                    <span>Email</span>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.Password" type="password" required="required">
+                    <span>Mật khẩu</span>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.ConfirmPassword" type="password" required="required">
+                    <span>Nhập lại mật khẩu</span>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for=Input.Address type="text" required="required">
+                    <span>Địa chỉ</span>
+                    <span asp-validation-for="Input.Address" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="button-register">
+                    <input class="input-register" type="submit" value="Đăng Ký">
+                </div>
+            </div>
+            <div class="right">
+                <div class="inputBox">
+                    <input asp-for="Input.FullName" type="text" required="required">
+                    <span>Họ tên</span>
+                    <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input asp-for="Input.PhoneNumber" type="text" required="required" >
+                    <span>Số điện thoại</span>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    <i></i>
+                </div>
+                <div class="inputBox" style="padding:8px 10px 10px">
+                    @*<select asp-for="Input.Role" asp-items="@Model.Input.RoleList">
+                        <option disabled selected>-Chọn người dùng-</option>
+                    </select>*@
+                    <select class="selectpicker form-control" asp-for="Input.Role" asp-items="@Model.Input.RoleList"
+                            data-container="body" data-live-search="true"
+                            title="Chọn người dùng" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                    <i></i>
+                </div>
+                @if (User.IsInRole(SD.Role_Admin))
+                {
+                    <div class="inputBox companyListIn" style="padding:8px 10px 10px;display: none;">
+
+                        <select class="selectpicker form-control" asp-for="Input.Role" asp-items="@Model.Input.CompanyList"
+                                data-container="body" data-live-search="true"
+                                title="Chọn công ty" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                    </div>
+                }
+                <div class="inputBox careerListIn" style="padding:8px 10px 10px;display: none">
+                    <select multiple class="selectpicker form-control" asp-for="@Model.Input.careerIds"
+                            asp-items="@Model.Input.CareerList" data-container="body" data-live-search="true"
+                            title="Chọn ngành nghề" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                    <i></i>
+                </div>
+            </div>
+            
+            
+        </form>
+        @if (!User.IsInRole(SD.Role_Admin))
+        {
+            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+                <span class="links-register">
+                <div class="links">
+                        Chưa cấu hình đăng nhập bằng dịch vụ khác
+                    </div>
+                </span>
+            }
+            else
+            {
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="registerExternal">
+                    <span class="links-register">
+                        <div class="links">
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                if (provider.DisplayName.ToLower().Equals("facebook") == true)
+                                {
+                                    <button type="submit" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName"><i class="facebook-i">f</i></button>
+                                }
+                                if (provider.DisplayName.ToLower().Equals("google") == true)
+                                {
+                                    <button type="submit" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName"><i class="google-i">G</i></button>
+                                }
+                            }
+                    </div>
+                    </span>
+                </form>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#Input_Role').change(function () {
+                var selection = $('#Input_Role Option:Selected').text();
+                if (selection == 'Company') {
+                    $('.careerListIn').show();
+                    $('.companyListIn').show();
+                }
+                else {
+                    $('.careerListIn').hide();
+                    $('.companyListIn').hide();
+                }
+            })
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
+   
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>*@
+@*    <script>
+        $(document).ready(function () {
+            // Retrieve all options
+            var allOptions = @Html.Raw(Json.Serialize(Model.Input.CareerList));
+
+            // Get the search input element
+            var searchInput = $('#searchInput');
+
+            // Get the select element
+            var selectElement = $('.listbox');
+
+            // Get the selected options list element
+            var selectedOptionsList = $('#selectedOptionsList');
+
+            // Populate the select element with options
+            $.each(allOptions, function (index, option) {
+                var newOption = new Option(option.text, option.value, false, false);
+                selectElement.append(newOption);
+            });
+
+            // Add event listener to the search input
+            searchInput.on('input', function () {
+                var searchTerm = $(this).val().trim().toLowerCase();
+                filterOptions(searchTerm);
+            });
+
+            // Add event listener for option selection
+            selectElement.on('change', function () {
+                updateSelectedOptionsList();
+            });
+
+            // Function to filter options based on the search term
+            function filterOptions(searchTerm) {
+                selectElement.empty();
+                $.each(allOptions, function (index, option) {
+                    if (option.text.toLowerCase().indexOf(searchTerm) !== -1) {
+                        var newOption = new Option(option.text, option.value, false, false);
+                        selectElement.append(newOption);
+                    }
+                });
+            }
+
+            // Function to update the selected options list
+            function updateSelectedOptionsList() {
+                selectedOptionsList.empty();
+                selectElement.find('option:selected').each(function () {
+                    var selectedOption = $(this);
+                    var listItem = $('<li>').text(selectedOption.text());
+                    selectedOptionsList.append(listItem);
+                });
+            }
+        });
+    </script>*@
+}

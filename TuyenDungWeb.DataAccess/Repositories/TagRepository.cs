@@ -1,7 +1,7 @@
 ﻿using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Model;
+using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repository
 {
@@ -12,9 +12,16 @@ namespace TuyenDungWeb.DataAccess.Repository
         {
             _db = db;
         }
-
-
-
+        public Tag GetById(int id)
+        {
+            var tag = _db.Tags.Find(id);
+            return tag;
+        }
+        public Tag GetFirstOrDefaultTagName(string tagName)
+        {
+            var tag = _db.Tags.FirstOrDefault(x => x.Name == tagName);
+            return tag;
+        }
         public void Update(Tag obj)
         {
             _db.Tags.Update(obj);

@@ -1,6 +1,7 @@
-﻿using TuyenDungWeb.DataAccess.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Model;
+using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
@@ -11,15 +12,23 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             _db = db;
         }
-
-
-
+        public JobPost GetById(int? id)
+        {
+            return _db.JobPosts.Find(id);
+        }
+        public JobPost FirstOrDefault(int? id)
+        {
+            return _db.JobPosts.Include("Tags").FirstOrDefault(u => u.Id == id);
+        }
+        public int? GetNextId()
+        {
+            return _db.JobPosts.Max(u => u.Id) + 1;
+        }
         public void Update(JobPost obj)
         {
-            var objFromDb = _db.JobPosts.FirstOrDefault(u => u.Id == obj.Id);
+            var objFromDb = _db.JobPosts.Include("Tags").FirstOrDefault(u => u.Id == obj.Id);
             if (objFromDb != null)
             {
-                objFromDb.PageTitle = obj.PageTitle;
                 objFromDb.Content = obj.Content;
                 objFromDb.Heading = obj.Heading;
                 objFromDb.ShortDescription = obj.ShortDescription;
@@ -32,7 +41,12 @@ namespace TuyenDungWeb.DataAccess.Repositories
                 objFromDb.Salary = obj.Salary;
                 objFromDb.Location = obj.Location;
                 objFromDb.Visible = obj.Visible;
+                objFromDb.JobTypeId = obj.JobTypeId;
+                objFromDb.Tags = obj.Tags;
+                objFromDb.CompanyId = obj.CompanyId;
+                objFromDb.JobId = obj.JobId;
                 objFromDb.Status = obj.Status;
+                objFromDb.Tags = obj.Tags;
                 //if (obj.ImageUrl != null)
                 //{
                 //    objFromDb.ImageUrl = obj.ImageUrl;

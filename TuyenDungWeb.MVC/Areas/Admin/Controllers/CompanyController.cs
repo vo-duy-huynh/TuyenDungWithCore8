@@ -21,10 +21,10 @@ namespace TuyenDungWeb.MVC.Areas.Admin.Controllers
         }
 
 
-        public IActionResult Upsert(Guid? id)
+        public IActionResult Upsert(int? id)
         {
 
-            if (id == null)
+            if (id == null || id == 0)
             {
                 ViewBag.Companies = _unitOfWork.Company.GetAll();
                 //create
@@ -47,7 +47,7 @@ namespace TuyenDungWeb.MVC.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
 
-                if (CompanyObj.Id.ToString() == "")
+                if (CompanyObj.Id == 0)
                 {
                     _unitOfWork.Company.Add(CompanyObj);
                 }

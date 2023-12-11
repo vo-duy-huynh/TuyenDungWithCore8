@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33620.401
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyenDungWeb.MVC", "TuyenDungWeb.MVC\TuyenDungWeb.MVC.csproj", "{7A0BB576-7C3C-4152-A1FA-73F73969B895}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb.DataAccess", "TuyenDungWeb.DataAccess\TuyenDungWeb.DataAccess.csproj", "{D9229D70-313B-41D2-A123-E824681A2A63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyenDungWeb.DataAccess", "TuyenDungWeb.DataAccess\TuyenDungWeb.DataAccess.csproj", "{D9229D70-313B-41D2-A123-E824681A2A63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb.Utility", "TuyenDungWeb.Utility\TuyenDungWeb.Utility.csproj", "{05EAF013-D859-4067-B7F1-ED3CDF692207}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyenDungWeb.Model", "TuyenDungWeb.Model\TuyenDungWeb.Model.csproj", "{C74D4F06-2BBA-460B-A16A-60A865681377}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb.Models", "TuyenDungWeb.Models\TuyenDungWeb.Models.csproj", "{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyenDungWeb.Utility", "TuyenDungWeb.Utility\TuyenDungWeb.Utility.csproj", "{05EAF013-D859-4067-B7F1-ED3CDF692207}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TuyenDungWeb", "TuyenDungWeb\TuyenDungWeb.csproj", "{07CA814C-3500-443D-BE20-A0FA82965466}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7A0BB576-7C3C-4152-A1FA-73F73969B895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A0BB576-7C3C-4152-A1FA-73F73969B895}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A0BB576-7C3C-4152-A1FA-73F73969B895}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A0BB576-7C3C-4152-A1FA-73F73969B895}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9229D70-313B-41D2-A123-E824681A2A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9229D70-313B-41D2-A123-E824681A2A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9229D70-313B-41D2-A123-E824681A2A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9229D70-313B-41D2-A123-E824681A2A63}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C74D4F06-2BBA-460B-A16A-60A865681377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C74D4F06-2BBA-460B-A16A-60A865681377}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C74D4F06-2BBA-460B-A16A-60A865681377}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C74D4F06-2BBA-460B-A16A-60A865681377}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05EAF013-D859-4067-B7F1-ED3CDF692207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05EAF013-D859-4067-B7F1-ED3CDF692207}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05EAF013-D859-4067-B7F1-ED3CDF692207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05EAF013-D859-4067-B7F1-ED3CDF692207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E8DA18-BF64-48A5-B9BC-FB588B5C29A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07CA814C-3500-443D-BE20-A0FA82965466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07CA814C-3500-443D-BE20-A0FA82965466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07CA814C-3500-443D-BE20-A0FA82965466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07CA814C-3500-443D-BE20-A0FA82965466}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

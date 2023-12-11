@@ -1,0 +1,17 @@
+﻿@model TuyenDungWeb.Views.Shared.Components.MessagePage.MessagePage.Message
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = @Model.title;
+}
+
+<div class="card m-4 justify-content-center" style="min-height: 360px">
+    <div class="card-header text-light">
+        <h4>@Model.title</h4>
+    </div>
+    <div class="card-body">
+        @Html.Raw(Model.htmlcontent)
+    </div>
+    <div class="card-footer">
+        Đang chuyển đến trang chủ <a href="@Model.urlredirect"></a>
+    </div>
+</div>

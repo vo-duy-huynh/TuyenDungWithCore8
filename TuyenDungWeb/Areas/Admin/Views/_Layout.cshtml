@@ -1,0 +1,631 @@
+﻿@using TuyenDungWeb.Utility;
+<!DOCTYPE html>
+<html lang="en">
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Dashboard 2</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link href="~/assets/css/loginregister.css" rel="stylesheet">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="~/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <!-- box icon -->
+    <link href="~/assets/css/boostrap-select.css" rel="stylesheet" />
+    
+</head>
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__wobble" src="~/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-dark">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Trang chủ</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto mb-1">
+                <li class="nav-item notification">
+                    <div class="notification-item__icon">
+                        <div class="notification-icon">
+                            <span class=""><i class=" fa fa-bell"></i></span>
+                        </div>
+                    </div>
+                    <span class="count-notification" id="count-notification"></span>
+                </li>
+                <li class="notification-list">
+                    <ul class="notification-ul">
+                    </ul>
+                </li>
+
+                <li class="nav-item notification2">
+                    <div class="notification2-item__icon">
+                        <div class="notification2-icon">
+                            <span class=""><i class=" fa fa-bell"></i></span>
+                        </div>
+                    </div>
+                    <span class="count-notification2" id="count-notification2">0</span>
+                </li>
+                <li class="notification-list2">
+                    <ul class="notification-ul2">
+                    </ul>
+                </li>
+            </ul>
+            <partial name="_LoginPartial" />
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="brand-link">
+                <img src="~/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">Quản Trị</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">@UserManager.GetUserName(User)</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <!-- Add icons to the links using the .nav-icon class
+                             with font-awesome or any other icon font library -->
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link active">
+                                <i class="nav-icon fas fa-university"></i>
+                                <p>
+                                    Trang Chủ
+                                   
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Company" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-building"></i>
+                                <p>
+                                    Quản Lý Công Ty
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Quản Lý Người Dùng
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a asp-area="Admin" asp-controller="User" asp-action="Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Danh Sách Người Dùng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Identity" asp-page="/Account/Register" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Thêm Người Dùng Mới</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>
+                                    Quản Lý Bài Viết
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a asp-area="Admin" asp-controller="JobPost" asp-action="Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Danh Sách Bài Viết</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Admin" asp-controller="JobPostTemp" asp-action="Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Đang Chờ Phê Duyệt</p>
+                                    </a>
+                                </li>
+                              
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Job" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-list"></i>
+                                <p>
+                                    Quản Lý Việc Làm
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="JobType" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-list"></i>
+                                <p>
+                                    Quản Lý Kiểu Việc Làm
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Career" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-list"></i>
+                                <p>
+                                    Quản Lý Ngành Nghề
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Tag" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fas fa-tags"></i>
+                                <p>
+                                    Quản Lý Thẻ
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="CompanyComment" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-comment"></i>
+                                <p>
+                                    Quản Lý Bình Luận
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <!-- /.content-header -->
+            <partial name="_Notification" />
+            @RenderBody()
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+            All rights reserved.
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 3.2.0-rc
+            </div>
+        </footer>
+    </div>
+    <style>
+        .dataTables_wrapper {
+            width: 100%;
+        }
+
+        .border {
+            width: 100%;
+        }
+
+        .wishlist {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            width: 65px;
+        }
+
+        .wishlist-item__icon {
+            margin-top: 6px;
+            margin-right: 6px;
+        }
+
+        .wishlist-icon {
+            align-items: center;
+            background-color: #E5F7ED;
+            border-radius: 50%;
+        }
+
+        .count-wishlist {
+            color: red;
+            font-weight: bold;
+            margin-left: -20px;
+            margin-top: -15px;
+        }
+
+        .bx-heart {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 15px;
+            margin: auto;
+        }
+
+            .bx-heart:hover {
+                color: red;
+            }
+
+        .fa-bell {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 15px;
+            margin: auto;
+            color: blue;
+        }
+
+        .notification {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65px;
+            width: 65px;
+        }
+
+        .notification-item__icon {
+            margin-top: 6px;
+            margin-right: 6px;
+        }
+
+        .notification-icon {
+            align-items: center;
+            background-color: #E5F7ED;
+            border-radius: 50%;
+        }
+
+        .count-notification {
+            color: red;
+            font-weight: bold;
+            margin-left: -20px;
+            margin-top: -15px;
+        }
+
+        .profile-user {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 54px;
+            width: 54px;
+            margin-left: 10px;
+            margin-right: 10px;
+            align-items: center;
+            background-color: #E5F7ED;
+            border-radius: 50%;
+        }
+
+            .profile-user:hover {
+                background-color: antiquewhite;
+            }
+
+        .profile-icon {
+        }
+
+        .bi-person-circle {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 15px;
+            margin: auto;
+        }
+        .added {
+            background-color: red;
+        }
+
+        .wish-list {
+            position: absolute;
+            top: 100%;
+            right: 150px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+            .wish-list ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .wish-list li {
+                padding: 8px 0;
+                border-bottom: 1px solid gray;
+                list-style-type: none;
+            }
+
+        .notification2 {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            display: flex;
+            cursor: pointer;
+        }
+
+        .count-notification2 {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 18px;
+            height: 18px;
+            background-color: red;
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .notification-list2 {
+            position: fixed;
+            bottom: 80px;
+            left: 0px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+            .notification-list2 ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .notification-list2 li {
+                padding: 8px 0;
+                border-bottom: 1px solid gray;
+                list-style-type: none;
+            }
+
+        .notification-list {
+            position: absolute;
+            top: 100%;
+            right: 0px;
+            z-index: 1;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            max-height: 300px; /* Set the maximum height for the div */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+            .notification-list ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .notification-list li {
+                padding: 8px 0;
+                border-bottom: 1px solid gray;
+                list-style-type: none;
+            }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+        }
+
+            .pagination li {
+                margin: 0 5px;
+            }
+
+                .pagination li.active {
+                    color: red;
+                }
+
+                    .pagination li.active a {
+                        color: white;
+                        background-color: red;
+                    }
+
+                .pagination li a {
+                    display: block;
+                    padding: 5px 10px;
+                    background-color: #eee;
+                    color: #333;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+
+                    .pagination li a:hover {
+                        background-color: #333;
+                        color: #fff;
+                    }
+
+
+        .pagination1 {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+        }
+
+            .pagination1 li {
+                margin: 0 5px;
+            }
+
+                .pagination1 li.active {
+                    color: red;
+                }
+
+                    .pagination1 li.active a {
+                        color: white;
+                        background-color: red;
+                    }
+
+                .pagination1 li a {
+                    display: block;
+                    padding: 5px 10px;
+                    background-color: #eee;
+                    color: #333;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+
+                    .pagination1 li a:hover {
+                        background-color: #333;
+                        color: #fff;
+                    }
+
+    </style>
+    <!-- ./wrapper -->
+    <!-- REQUIRED SCRIPTS -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- overlayScrollbars -->
+    <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/adminlte.js"></script>
+
+    <!-- PAGE PLUGINS -->
+    <!-- jQuery Mapael -->
+    <script src="~/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+    <script src="~/plugins/raphael/raphael.min.js"></script>
+    <script src="~/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+    <script src="~/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+    <!-- ChartJS -->
+    <script src="~/plugins/chart.js/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+
+    <script src="https://cdn.tiny.cloud/1/g28lhnxtlihu4l4a381gw7tz47voznshwbi10lmsvlekrfme/tinymce/6/tinymce.min.js" referrerpolicy="origin">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/dist/js/demo.js"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <script src="~/dist/js/pages/dashboard2.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Hide the wishlist container on page load
+            $('.wish-list').hide();
+
+            // Toggle the display of the wishlist container when clicking on the wishlist button
+            $('.wishlist').click(function () {
+                $('.wish-list').toggle();
+            });
+        });
+        $('.notification-list2').hide();
+
+        // Toggle the display of the notification-list2 when clicking on the notification2 element
+        $('.notification2').click(function () {
+            toggleNotificationList2();
+        });
+        function toggleNotificationList2() {
+            var notificationList2 = document.querySelector('.notification-list2');
+            notificationList2.style.display = notificationList2.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+
+    <script>
+        $.get('/Company/Home/GetWishlistItems', function (data) {
+            var wishlistContainer = $('<ul class="wish-list"></ul>');
+            $.each(data, function (index, item) {
+                var itemElement = $('<li class="wishlist-item" data-wishlist-id="' + item.jobPost.id + '"></li>');
+                var titleElement = $('<div class="wishlist-item__title"></div>');
+                var linkElement = $('<a href="/Customer/Home/Detail/' + item.jobPost.id + '">' + item.jobPost.heading + '</a>');
+
+                titleElement.append(linkElement);
+                itemElement.append(titleElement);
+                wishlistContainer.append(itemElement);
+            });
+
+            $('.count-wishlist').text(data.length);
+            $('.wish-list').replaceWith(wishlistContainer);
+            var countElement = $('.count-wishlist');
+            countElement.text(data.length);
+        });
+    </script>
+    @if (User.IsInRole(SD.Role_Admin))
+    {
+        <script>
+            $.get('/Company/Home/GetNotificationItems', function (data) {
+                var wishlistContainer = $('<ul class="notification-ul"></ul>');
+                $.each(data, function (index, item) {
+                    var itemElement = $('<li class="notificationlist-item" data-notification-id="' + item.id + '"></li>');
+                    var titleElement = $('<div class="notificationlist-item__title"></div>');
+                    var linkElement = $('<a href="/Admin/jobposttemp/Upsert/' + item.id + '">' + item.message + '</a>');
+
+                    titleElement.append(linkElement);
+                    itemElement.append(titleElement);
+                    wishlistContainer.append(itemElement);
+                });
+
+                $('.count-notification').text(data.length);
+                $('.notification-ul').replaceWith(wishlistContainer);
+                var countElement = $('.count-notification');
+                countElement.text(data.length);
+            });
+        </script>
+    }
+    <script src="~/js/notification.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

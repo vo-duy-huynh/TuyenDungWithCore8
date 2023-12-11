@@ -1,0 +1,161 @@
+﻿@using TuyenDungWeb.Models;
+@model JobVM
+<div class="card shadow border-0 pt-5">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách việc làm</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Job" asp-action="Create" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+                    <i class="bi bi-plus-circle"></i>  Thêm mới việc làm
+                </a>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Thêm mới</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form asp-controller="Job" asp-action="Create" method="post">
+                                    <div class="p-4">
+                                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Tên việc làm</label>
+                                            <input id="Name" name="Name" class="form-control bg-white border-0 shadow" />
+                                        </div>
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Ghi chú</label>
+                                            <input id="Note" name="Note" class="form-control bg-white border-0 shadow" />
+                                            
+                                        </div>
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Ngành nghề</label>
+                                            <select id="CareerId" name="CareerId" asp-items="@Model.CareeList" class="form-control bg-white border-0 shadow">
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Thêm mới</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalTitle">Chỉnh sửa</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editForm" asp-controller="Job" asp-action="Edit" method="post">
+                                    <div class="p-4">
+                                        <input type="hidden" id="editId" name="editId" />
+                                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Tên việc làm</label>
+                                            <input id="editName" name="editName" class="form-control bg-white border-0 shadow" />
+                                        </div>
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Ghi chú</label>
+                                            <input id="editNote" name="editNote" class="form-control bg-white border-0 shadow" />
+                                        </div>
+                                        <div class="form-floating py-2 col-12">
+                                            <label class="ms-2">Ngành nghề</label>
+                                            <select id="editCareerId" name="editCareerId" class="form-control bg-white border-0 shadow">
+                                                @foreach (var career in Model.CareeList)
+                                                {
+                                                    <option value="@career.Value" data-careerid="@career.Value">@career.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Tên công việc
+                    </th>
+                    <th>
+                        Ghi chú
+                    </th>
+                    <th>
+                        Ngành Nghề
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            
+        </table>
+
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/job.js"></script>
+    <script>
+        
+        function openEditModal(id, name, note, careerId) {
+
+            // Set the form values
+            if (name != null) {
+                document.getElementById("editName").value = name;
+            }
+            document.getElementById("editName").value = name;
+            if (note != null) {
+                document.getElementById("editNote").value = note;
+            }
+            
+            document.getElementById("editId").value = id;
+            if(careerId != null){
+                var careerSelect = document.getElementById('editCareerId');
+                for (var i = 0; i < careerSelect.options.length; i++) {
+                    if (careerSelect.options[i].value == careerId) {
+                        careerSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+
+            }
+            document.getElementById("editCareerId").value = 0;
+            // Set the form action URL to include the ID
+            var form = document.getElementById("editForm");
+            var actionUrl = form.getAttribute("action");
+            form.setAttribute("action", actionUrl + "/" + id);
+
+            // Open the edit modal
+            var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            editModal.show();
+        }
+    </script>
+    
+}

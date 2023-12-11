@@ -1,0 +1,184 @@
+﻿@model JobPostVM
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2"> @(Model.JobPost.Id != 0 ? "Update" : "Create") JobPost</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="JobPost.Id" hidden />
+            <input type="text" id="tagNames" name="tagNames" hidden/>
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.Heading" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.Heading" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.Heading" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.UrlHandle" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.UrlHandle" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.UrlHandle" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="JobPost.Content" class="ms-2 text-muted"></label>
+                            <textarea asp-for="JobPost.Content" class="form-control border-0 shadow"></textarea>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.ShortDescription" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.ShortDescription" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.ShortDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.NumberOfRecruiting" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.NumberOfRecruiting" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.NumberOfRecruiting" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.Location" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.Location" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.Location" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input type="date" asp-for="JobPost.EndDate" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.EndDate" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="form-select border-0 shadow">
+                            </select>
+                            <label asp-for="SelectedJobType" class="ms-2">Chọn kiểu việc làm</label>
+                            <span asp-validation-for="@Model.SelectedJobType" class="text-danger"></span>
+                        </div>
+                        @*<div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="JobPost.Visible">
+                                    <input  asp-for="JobPost.Visible" />
+                                    @Html.DisplayNameFor(m => m.JobPost.Visible)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <div class="checkbox">
+                                <label asp-for="JobPost.Status">
+                                    <input asp-for="JobPost.Status" />
+                                    @Html.DisplayNameFor(m => m.JobPost.Status)
+                                </label>
+                            </div>
+                        </div>*@
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedJob" asp-items="@Model.JobList" class="form-select border-0 shadow">
+                            </select>
+                            <label asp-for="SelectedJob" class="ms-2">Chọn việc làm</label>
+                            <span asp-validation-for="@Model.SelectedJob" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.Experience" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.Experience" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.Experience" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.Salary" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.Salary" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.Salary" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="JobPost.Gender" class="form-control border-0 shadow" />
+                            <label asp-for="JobPost.Gender" class="ms-2"></label>
+                            <span asp-validation-for="JobPost.Gender" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            @Html.LabelFor(model => model.tagIds, htmlAttributes: new { @class = "ms-2" })
+                            <select asp-for="@Model.tagIds" asp-items="@Model.Tags" id="tagIds" multiple name="tagIds" placeholder="Chon tag" data-search="true" data-silent-initial-value-set="true">
+                            </select>
+
+                        </div>
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
+                            <div class="form-floating py-2 col-12">
+                                <select asp-for="@Model.SelectedCompany" asp-items="@Model.CompanyList" class="form-select border-0 shadow">
+                                </select>
+                                <label asp-for="SelectedCompany" class="ms-2">Chọn công ty</label>
+                                <span asp-validation-for="@Model.SelectedCompany" class="text-danger"></span>
+                            </div>
+                        }
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.JobPost.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="JobPost" asp-action="Index" class="btn btn-outline-primary border  form-control">
+                                    Trở về
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons  lists   table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
+        });
+    </script>
+    <script src="~/assets/dist/virtual-select.min.js"></script>
+    <script type="text/javascript">
+        VirtualSelect.init({
+            ele: '#tagIds'
+        });
+
+    </script>
+    <script>
+        // gán giá trị khi bắt đầu
+        localStorage.setItem('tagId', document.querySelector('.vscomp-value').textContent);
+        document.getElementById("tagNames").value = localStorage.getItem('tagId');
+
+        // Lấy phần tử div có lớp vscomp-value
+        var target = document.querySelector('.vscomp-value');
+
+        // Tạo một MutationObserver instance
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                // Lấy giá trị mới của phần tử div và lưu vào localStorage với key là "tagIds"
+                localStorage.setItem('tagId', mutation.target.textContent);
+                //set value for input id="tagNames"
+                document.getElementById("tagNames").value = localStorage.getItem('tagId');
+                //delete localStorage
+                localStorage.clear();
+            });
+        });
+
+        //Cấu hình và bắt đầu theo dõi phần tử
+        var config = { attributes: true, childList: true, characterData: true };
+        observer.observe(target, config);
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

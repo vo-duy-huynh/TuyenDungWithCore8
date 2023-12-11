@@ -1,0 +1,42 @@
+﻿@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        if (SignInManager.IsSignedIn(User) && User.IsInRole(SD.Role_Admin))
+        {
+            Layout = "/Areas/Admin/Views/_Layout.cshtml";
+        }
+        else
+        {
+            Layout = "/Views/Shared/_Layout.cshtml";
+        }
+        
+    }
+}
+
+<h3 class="p-5 wow fadeIn">Quản Lý Thông Tin Tài Khoản</h3>
+
+<div class="container-fluid wow fadeIn" data-wow-delay="0.1s" style="min-height: 80%;">
+    <div class="container" style="padding-left: 55px;">
+        <h2>Thay đổi cài đặt tài khoản của bạn</h2>
+        <hr />
+        <div class="row">
+            <div class="col-md-3">
+                <partial name="_ManageNav" />
+            </div>
+            <div class="col-md-9">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+

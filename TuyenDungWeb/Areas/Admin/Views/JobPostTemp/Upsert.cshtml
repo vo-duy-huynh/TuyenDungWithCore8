@@ -1,0 +1,148 @@
+﻿@model JobPostVM
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="card shadow border-0 my-4 pt-5">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2"> @(Model.JobPostTemp.Id != 0 ? "Cập nhật" : "Thêm mới") bài viết</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="JobPostTemp.Id" hidden />
+            <input asp-for="JobPostTemp.CompanyId" hidden />
+            <input asp-for="JobPostTemp.CreatedDate" hidden />
+            <input asp-for="JobPostTemp.EndDate" hidden />
+            <input asp-for="JobPostTemp.Message" hidden />
+            <input asp-for="JobPostTemp.UserIdSend" hidden />
+                    <div class="border p-3">
+
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="form-floating py-2 col-12">
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedCompany"
+                                    asp-items="@Model.CompanyList" data-container="body" data-live-search="true"
+                                    title="Chọn công ty" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true" disabled></select>
+                            <span asp-validation-for="@Model.SelectedCompany" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                             <label asp-for="JobPostTemp.Heading" class="ms-2">Tiêu đề</label>
+                            <input asp-for="JobPostTemp.Heading" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.Heading" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label class="ms-2">Đường dẫn</label>
+                            <input id="UrlHandle" name="UrlHandle" class="form-control border-0 shadow" />
+                       
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="JobPostTemp.Content" class="ms-2 text-muted">Nội dung</label>
+                            <textarea asp-for="JobPostTemp.Content" class="form-control border-0 shadow"></textarea>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPostTemp.ShortDescription" class="ms-2">Mô tả ngắn</label>
+                            <input asp-for="JobPostTemp.ShortDescription" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.ShortDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPostTemp.NumberOfRecruiting" class="ms-2">Số lượng</label>
+                            <input asp-for="JobPostTemp.NumberOfRecruiting" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.NumberOfRecruiting" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPostTemp.Location" class="ms-2">Thành phố</label>
+                            <input asp-for="JobPostTemp.Location" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.Location" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="@Model.SelectedJobType" asp-items="@Model.JobTypeList" class="selectpicker form-control"
+                                data-container="body" data-live-search="true"
+                                title="Chọn kiểu việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true">
+                            </select>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select class="selectpicker form-control" asp-for="@Model.SelectedJob"
+                            asp-items="@Model.JobList" data-container="body" data-live-search="true"
+                            title="Chọn việc làm" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select multiple class="selectpicker form-control" asp-for="@Model.tagIds"
+                            asp-items="@Model.Tags" data-container="body" data-live-search="true"
+                            title="Chọn ngành nghề" data-hide-disabled="true" data-actions-box="true" data-virtual-scroll="true"></select>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPostTemp.Experience" class="ms-2">Kinh nghiệm</label>
+                            <input asp-for="JobPostTemp.Experience" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.Experience" class="text-danger"></span>
+                        </div>
+                       @* <div class="form-floating py-2 col-12">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Visible">
+                                    <input type="checkbox" asp-for="JobPostTemp.Visible" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Visible)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="JobPostTemp.Status">
+                                    <input asp-for="JobPostTemp.Status" />
+                                    @Html.DisplayNameFor(m => m.JobPostTemp.Status)
+                                </label>
+                            </div>
+                        </div>*@
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="JobPostTemp.Salary" class="ms-2">Mức lương</label>
+                            <input asp-for="JobPostTemp.Salary" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.Salary" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label class="ms-2">Giới tính</label>
+                            <input asp-for="JobPostTemp.Gender" class="form-control border-0 shadow" />
+                            <span asp-validation-for="JobPostTemp.Gender" class="text-danger"></span>
+                        </div>
+
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.JobPostTemp.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Cập nhật</button>
+                                }
+                                else
+                                {
+                            <button type="submit" class="btn btn-primary " style="width: 100%">Thêm mới</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                        <a asp-controller="JobPost" asp-action="Index" class="btn btn-outline-primary border text-white" style="width: 100%">
+                                   Trở về
+                                </a>
+                            </div>
+                        </div>
+
+
+                    </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons  lists   table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough |  align lineheight | numlist bullist indent outdent',
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/boostrap-select.js"></script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

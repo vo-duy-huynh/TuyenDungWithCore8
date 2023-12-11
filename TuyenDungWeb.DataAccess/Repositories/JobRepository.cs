@@ -1,6 +1,6 @@
 ﻿using TuyenDungWeb.DataAccess.Data;
 using TuyenDungWeb.DataAccess.Repositories.IRepository;
-using TuyenDungWeb.Model;
+using TuyenDungWeb.Models;
 
 namespace TuyenDungWeb.DataAccess.Repositories
 {
@@ -11,9 +11,15 @@ namespace TuyenDungWeb.DataAccess.Repositories
         {
             _db = db;
         }
-        public void Update(Tag obj)
+        public Job GetById(int id)
         {
-            _db.Tags.Update(obj);
+            var job = _db.Jobs.Find(id);
+            return job;
+        }
+
+        public void Update(Job obj)
+        {
+            _db.Jobs.Update(obj);
         }
     }
 }

@@ -4,8 +4,12 @@
     {
         IJobTypeRepository JobType { get; }
         IJobPostRepository JobPost { get; }
+        IJobPostTempRepository JobPostTemp { get; }
         ICompanyRepository Company { get; }
+        ICompanyCommentRepository CompanyComment { get; }
+        ICompanyFollowRepository CompanyFollow { get; }
         ITagRepository Tag { get; }
+        ICareerRepository Career { get; }
         IJobRepository Job { get; }
         IWishListRepository WishList { get; }
         IApplicationUserRepository ApplicationUser { get; }

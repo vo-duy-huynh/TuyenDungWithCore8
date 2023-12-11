@@ -1,0 +1,136 @@
+﻿@model JobPostVM
+@{
+    var wordLetterUrl = Model.ProfileHeader.CoverLetter; // Replace with the correct property containing the Word document URL
+    var viewerLetterUrl = $"https://docs.google.com/gview?url={Uri.EscapeDataString(wordLetterUrl)}&embedded=true";
+    var wordCVUrl = Model.ProfileHeader.CV; // Replace with the correct property containing the Word document URL
+    var viewerCVUrl = $"https://docs.google.com/gview?url={Uri.EscapeDataString(wordCVUrl)}&embedded=true";
+}
+<!-- Header End -->
+<div class="container-xxl py-5 bg-dark page-header mb-5">
+    <div class="container my-5 pt-5 pb-4">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">Job Detail</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-uppercase">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">Job Detail</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Header End -->
+<!-- Job Detail Start -->
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row gy-5 gx-4">
+            <div class="col-lg-8">
+
+                <div class="mb-5">
+                    <div class="applyJob">
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="hidden" asp-for="@Model.ProfileHeader.Id" value="@Model.ProfileHeader.Id" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.City" value="@Model.ProfileHeader.City" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.UserReceiveId" value="@Model.ProfileHeader.ApplicationUserId" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.ApplicationUserId" value="@Model.ProfileHeader.ApplicationUserId" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.CV" value="@Model.ProfileHeader.CV" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.CoverLetter" value="@Model.ProfileHeader.CoverLetter" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.JobTitle" value="@Model.ProfileHeader.JobTitle" />
+                            <input type="hidden" asp-for="@Model.ProfileHeader.JobPostId" value="@Model.ProfileHeader.JobPostId" />
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Tên của bạn</label>
+                                <input type="text" class="form-control" value="@Model.ProfileHeader.Name" asp-for="@Model.ProfileHeader.Name" placeholder="Nhập tên của bạn...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Địa chỉ email</label>
+                                <input type="email" class="form-control" value="@Model.ProfileHeader.Email" asp-for="@Model.ProfileHeader.Email" placeholder="Nhập email...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" asp-for="@Model.ProfileHeader.PhoneNumber" value="@Model.ProfileHeader.PhoneNumber" id="phoneNumber" placeholder="Nhập số điện thoại...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Trạng thái</label>
+                                <select class="form-select" aria-label="Default select example" asp-items="@Model.status" asp-for="@Model.ProfileHeader.Status">
+                                    <option value="0" >Chọn trạng thái</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+
+                        </form>
+                        @if (Model.ProfileHeader.CV.Contains(".pdf"))
+                        {
+                            <button class="btn btn-success" id="showPdfCV">Xem CV</button>
+                            <embed id="pdfCVViewer" src="@Model.ProfileHeader.CV" type="application/pdf" width="100%" height="600px" style="display: none;" />
+                        }
+                        else if (Model.ProfileHeader.CV.Contains(".docx"))
+                        {
+                            <button class="btn btn-success" id="showWordCV">Xem CV</button>
+                            <iframe id="wordCVViewer" src="@viewerCVUrl" width="100%" height="600px" style="display: none;"></iframe>
+                        }
+                        @if(Model.ProfileHeader.CoverLetter.Contains(".pdf"))
+                        {
+                            <button class="btn btn-success" id="showPdfLetter">Xem thư xin việc</button>
+                            <embed id="pdfLetterViewer" src="@Model.ProfileHeader.CoverLetter" type="application/pdf" width="100%" height="600px" style="display: none;" />
+                        }
+                        else if(Model.ProfileHeader.CoverLetter.Contains(".docx"))
+                        {
+                            <button class="btn btn-success" id="showWordLetter">Xem thư xin việc</button>
+                            <iframe id="wordLetterViewer" src="@viewerLetterUrl" width="100%" height="600px" style="display: none;"></iframe>
+                        }
+                        
+
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
+                    <h4 class="mb-4">Thông tin việc làm</h4>
+                    <p><i class="fa fa-angle-right text-primary me-2"></i>@Model.JobPost.Heading</p>
+                    <p><i class="fa fa-angle-right text-primary me-2"></i>@Model.Company.Name</p>
+                    <p><i class="fa fa-angle-right text-primary me-2"></i>Số lượng còn tuyển @Model.JobPost.NumberOfRecruiting</p>
+                    <p><i class="fa fa-angle-right text-primary me-2"></i>@Model.JobPost.Salary</p>
+                    <p><i class="fa fa-angle-right text-primary me-2"></i>@Model.JobPost.Location</p>
+                    <p class="m-0"><i class="fa fa-angle-right text-primary me-2"></i>Hạn ứng tuyển: @String.Format("{0:dd/MM/yyyy}", Model.JobPost.EndDate)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Job Detail End -->
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#showPdfCV').click(function () {
+                $('#pdfCVViewer').show();
+
+            });
+            $('#showPdfLetter').click(function () {
+                $('#pdfLetterViewer').show();
+            });
+            $('#showWordCV').click(function () {
+                $('#wordCVViewer').show();
+            });
+            $('#showWordLetter').click(function () {
+                $('#wordLetterViewer').show();
+            });
+        });
+    </script>
+    @if (ViewBag.ShowAlert)
+    {
+        <script>
+            Swal.fire({
+                icon: '@ViewBag.SweetAlertIcon',
+                title: '@ViewBag.SweetAlertTitle',
+                text: 'Thời gian nạp hồ sơ đã hết, có muốn tiếp nhận không?',
+                footer: '@Html.Raw(ViewBag.SweetAlertFooter)'
+            });
+        </script>
+    }
+}
