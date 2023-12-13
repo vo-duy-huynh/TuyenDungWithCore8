@@ -1,1 +1,1 @@
-cập nhật version .NET core và code nâng cấp lại
+Đã fix xong và sẽ sửa lại một chút ở migration
