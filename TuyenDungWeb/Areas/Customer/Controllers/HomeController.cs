@@ -124,7 +124,7 @@ namespace TuyenDungWeb.Areas.Customer.Controllers
                 return NotFound();
             }
             var jobPost = _unitOfWork.JobPost.Get(filter: u => u.UrlHandle == url, includeProperties: "Tags");
-            var company = _unitOfWork.Company.FirstOrDefault(jobPost.Id);
+            var company = _unitOfWork.Company.FirstOrDefault(jobPost.CompanyId);
             var wishList = _unitOfWork.WishList.GetAll().ToList();
             //get all post jobs like job
             var jobPostsLikeTagsTemp = _unitOfWork.JobPost.GetAll(filter: u => u.Id != jobPost.Id && u.JobId == jobPost.JobId, includeProperties: "Tags").ToList();

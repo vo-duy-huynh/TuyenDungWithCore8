@@ -22,7 +22,8 @@ namespace TuyenDungWeb.DataAccess.Repositories
         }
         public int? GetNextId()
         {
-            return _db.JobPosts.Max(u => u.Id) + 1;
+                return 1;
+            //return _db.JobPosts.Max(u => u.Id) + 1;
         }
         public void Update(JobPost obj)
         {

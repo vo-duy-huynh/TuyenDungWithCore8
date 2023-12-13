@@ -147,6 +147,7 @@ namespace TuyenDungWeb.Areas.Company.Controllers
                 JobPostVM.JobPostTemp.CompanyId = int.Parse(CompanyId);
             }
             if (JobPostVM.JobPostTemp.Id == 0)
+
             {
                 _unitOfWork.JobPostTemp.Add(JobPostVM.JobPostTemp);
             }

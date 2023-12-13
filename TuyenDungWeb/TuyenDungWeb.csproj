@@ -58,6 +58,8 @@
     <Folder Include="Areas\Identity\Pages\Shared\" />
     <Folder Include="wwwroot\cvs\" />
     <Folder Include="wwwroot\images\avatars\" />
+    <Folder Include="wwwroot\images\Companys\" />
+    <Folder Include="wwwroot\images\screenshots\" />
     <Folder Include="wwwroot\letters\" />
     <Folder Include="wwwroot\PeerChat\.git\objects\info\" />
     <Folder Include="wwwroot\PeerChat\.git\refs\tags\" />
